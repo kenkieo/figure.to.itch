@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">图痒</string>
+	
+	<string name="text_add">+</string>
+	<string name="text_menu_mode">模式</string>
+	<string name="text_menu_material">素材</string>
+	<string name="text_menu_parameter">参数</string>
+</resources>

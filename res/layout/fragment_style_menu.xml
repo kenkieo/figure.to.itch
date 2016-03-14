@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.com.demo.widget.StyleMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_style_menu"
+    android:layout_width="match_parent"
+    android:layout_height="60.0dip"
+    android:background="#443F46"
+    android:gravity="center"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/fragment_sytle_menu_mode"
+        android:layout_width="80.0dip"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/common_homepage_tabbar_mode_selector"
+        android:gravity="center"
+        android:text="@string/text_menu_mode"
+        android:textColor="@drawable/common_textcolor_white_2_yellow_selecotr"
+        android:textSize="12.0sp" />
+
+    <TextView
+        android:id="@+id/fragment_sytle_menu_resource"
+        android:layout_width="80.0dip"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/common_homepage_tabbar_resource_selector"
+        android:gravity="center"
+        android:text="@string/text_menu_material"
+        android:textColor="@drawable/common_textcolor_white_2_yellow_selecotr"
+        android:textSize="12.0sp" />
+
+    <TextView
+        android:id="@+id/fragment_sytle_menu_parameter"
+        android:layout_width="80.0dip"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/common_homepage_tabbar_parameter_selector"
+        android:gravity="center"
+        android:text="@string/text_menu_parameter"
+        android:textColor="@drawable/common_textcolor_white_2_yellow_selecotr"
+        android:textSize="12.0sp" />
+
+</com.example.com.demo.widget.StyleMenuLayout>

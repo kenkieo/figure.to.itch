@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_gridview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_transparent"
+    android:cacheColorHint="@color/common_transparent"
+    android:columnWidth="100dip"
+    android:fadingEdge="none"
+    android:fadingEdgeLength="0.0dip"
+    android:horizontalSpacing="7.5dip"
+    android:listSelector="@color/common_transparent"
+    android:numColumns="3"
+    android:padding="7.5dip"
+    android:scrollbars="none"
+    android:stretchMode="columnWidth"
+    android:verticalSpacing="7.5dip" />

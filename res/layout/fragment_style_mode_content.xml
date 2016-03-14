@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.com.demo.widget.StyleModeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.example.com.demo"
+    android:id="@+id/fragment_style_mode_content"
+    android:layout_width="match_parent"
+    android:layout_height="0.0dip"
+    android:layout_weight="1.0"
+    android:background="@color/common_bottom_content"
+    android:gravity="center"
+    android:orientation="horizontal" >
+
+    <com.example.com.demo.view.RatioImageView
+        android:id="@+id/fragment_style_menu_mode_1"
+        android:layout_width="0.0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:scaleType="center"
+        android:src="@drawable/common_homepage_modebar_mode1_selector"
+        app:RatioImageView_X="1"
+        app:RatioImageView_Y="1" />
+
+    <com.example.com.demo.view.RatioImageView
+        android:id="@+id/fragment_style_menu_mode_2"
+        android:layout_width="0.0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:scaleType="center"
+        android:src="@drawable/common_homepage_modebar_mode2_selector"
+        app:RatioImageView_X="1"
+        app:RatioImageView_Y="1" />
+
+    <com.example.com.demo.view.RatioImageView
+        android:id="@+id/fragment_style_menu_mode_3"
+        android:layout_width="0.0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:scaleType="center"
+        android:src="@drawable/common_homepage_modebar_mode3_selector"
+        app:RatioImageView_X="1"
+        app:RatioImageView_Y="1" />
+
+</com.example.com.demo.widget.StyleModeLayout>

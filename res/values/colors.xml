@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="common_transparent">#00000000</color>
+    <color name="common_translucence_deep">#A0000000</color>
+    <color name="common_translucence">#80000000</color>
+    <color name="common_translucence_light">#40000000</color>
+    <color name="common_white">#FFFFFFFF</color>
+    <color name="common_yellow">#FFDEA602</color>
+    <color name="common_yellow_pre">#80DEA602</color>
+    <color name="common_bottom_content">#434044</color>
+    <color name="common_line">#DEDEDE</color>
+    <color name="common_gray">#dedede</color>
+
+    <color name="common_purple">#FF434044</color>
+</resources>

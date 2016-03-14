@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_resource_item"
+    android:layout_width="80.0dip"
+    android:layout_height="80.0dip" >
+
+    <com.example.com.demo.view.RatioColorFilterImageView
+        android:id="@+id/layout_resource_item_icon"
+        android:layout_width="80.0dip"
+        android:layout_height="80.0dip"
+        android:background="@drawable/common_source_selector"
+        android:scaleType="center" />
+
+</LinearLayout>
