@@ -67,25 +67,29 @@ public class ModeFrame extends View {
 		mPaint.setColor(getResources().getColor(R.color.common_purple));
 		mPaint.setStrokeWidth(1);
 		mPaint.setAntiAlias(true);
-		mPaint.setStyle(Style.STROKE);
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
+		Log.i("TAG", "onDraw-----------------");
 		if(mFrames != null){
 			int size = mFrames.size();
 			for (int i = 0; i < size; i++) {
 				Frame frame = mFrames.get(i);
-				frame.mRectC.round(frame.mRect);
-				
 				canvas.save();
 				Matrix matrix = canvas.getMatrix();
-				matrix.preTranslate(frame.mPointC.x, frame.mPointC.y);
-				matrix.preRotate(frame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);
-//				matrix.preRotate(frame.mDrawableDegreesC, frame.mRect.centerX(), frame.mRect.centerY());
-//				matrix.postScale(frame.mMirror ? -1 : 1, 1, frame.mRealRect.centerX(), frame.mRealRect.centerY());
-				canvas.concat(matrix);
 
+				matrix.preRotate(frame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);
+				matrix.preTranslate(frame.mPointC.x, frame.mPointC.y);
+				matrix.preRotate(frame.mDrawableDegreesC, frame.mRectC.centerX(), frame.mRectC.centerY());
+				matrix.preScale(frame.mMirror ? -1 : 1, 1, frame.mRectC.centerX(), frame.mRectC.centerY());
+				canvas.concat(matrix);
+				
+				mPaint.setStyle(Style.FILL);
+				canvas.drawLine(0, 0, getWidth(), frame.mPointC.y, mPaint);
+
+
+				frame.mRectC.round(frame.mRect);
 				frame.mDrawable.setBounds(frame.mRect);
 				frame.mDrawable.setColorFilter(frame.mColor | 0xFF000000, Mode.SRC_IN);
 				frame.mDrawable.draw(canvas);
@@ -93,14 +97,15 @@ public class ModeFrame extends View {
 				canvas.restore();
 			}
 		}
-		
+
+		mPaint.setStyle(Style.STROKE);
 		if(mSelectFrame != null){
 			canvas.save();
 			
 			Matrix matrix = canvas.getMatrix();
-			matrix.preTranslate(mSelectFrame.mPointC.x, mSelectFrame.mPointC.y);
 			matrix.preRotate(mSelectFrame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);
-//			matrix.preRotate(mSelectFrame.mDrawableDegreesC, mSelectFrame.mRect.centerX(), mSelectFrame.mRect.centerY());
+			matrix.preTranslate(mSelectFrame.mPointC.x, mSelectFrame.mPointC.y);
+			matrix.preRotate(mSelectFrame.mDrawableDegreesC, mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY());
 			canvas.concat(matrix);
 			
 			drawMenu(canvas, mSelectFrame.mRectC);
@@ -110,13 +115,13 @@ public class ModeFrame extends View {
 	}
 	
 	private void drawMenu(Canvas canvas, RectF rectF){
-		float left 		= rectF.left - mPadding;
-		float top 		= rectF.top - mPadding;
-		float right 	= rectF.right + mPadding;
+		float left 		= rectF.left   - mPadding;
+		float top 		= rectF.top    - mPadding;
+		float right 	= rectF.right  + mPadding;
 		float bottom 	= rectF.bottom + mPadding;
 		canvas.drawRect(left, top, right, bottom, mPaint);
 		
-		int dLeft 	= (int) (left - mDrawableDel.getIntrinsicWidth() / 2);
+		int dLeft 	= (int) (left - mDrawableDel.getIntrinsicWidth()  / 2);
 		int dTop 	= (int) (top  - mDrawableDel.getIntrinsicHeight() / 2);
 		int dRight 	= dLeft + mDrawableDel.getIntrinsicWidth();
 		int dBottom	= dTop  + mDrawableDel.getIntrinsicHeight();
@@ -124,20 +129,20 @@ public class ModeFrame extends View {
 		mDrawableDel.draw(canvas);
 		
 		dLeft 	= (int) (right - mDrawableRotate.getIntrinsicWidth() / 2);
-		dTop 	= (int) (top - mDrawableRotate.getIntrinsicHeight() / 2);
+		dTop 	= (int) (top - mDrawableRotate.getIntrinsicHeight()  / 2);
 		dRight 	= dLeft + mDrawableRotate.getIntrinsicWidth();
 		dBottom	= dTop  + mDrawableRotate.getIntrinsicHeight();
 		mDrawableRotate.setBounds(dLeft, dTop, dRight, dBottom);
 		mDrawableRotate.draw(canvas);
 		
-		dLeft 	= (int) (left - mDrawableReversal.getIntrinsicWidth() / 2);
+		dLeft 	= (int) (left 	- mDrawableReversal.getIntrinsicWidth()  / 2);
 		dTop 	= (int) (bottom - mDrawableReversal.getIntrinsicHeight() / 2);
 		dRight 	= dLeft + mDrawableReversal.getIntrinsicWidth();
 		dBottom	= dTop  + mDrawableReversal.getIntrinsicHeight();
 		mDrawableReversal.setBounds(dLeft, dTop, dRight, dBottom);
 		mDrawableReversal.draw(canvas);
 		
-		dLeft 	= (int) (right - mDrawableScale.getIntrinsicWidth() / 2);
+		dLeft 	= (int) (right  - mDrawableScale.getIntrinsicWidth()  / 2);
 		dTop 	= (int) (bottom - mDrawableScale.getIntrinsicHeight() / 2);
 		dRight 	= dLeft + mDrawableScale.getIntrinsicWidth();
 		dBottom	= dTop  + mDrawableScale.getIntrinsicHeight();
@@ -171,6 +176,7 @@ public class ModeFrame extends View {
 	}
 	
 	protected void handleMessage(Message msg) {
+		Log.i("TAG", "handleMessage");
 		boolean stop = true;
 		for (int i = 0; i < mFrames.size(); i++) {
 			Frame frame = mFrames.get(i);
@@ -214,9 +220,9 @@ public class ModeFrame extends View {
 			
 			for (Frame frame : mFrames) {
 				frame.mDrawableDegreesP = frame.mDrawableDegreesC;
-				frame.mRectP.set(frame.mRectC);
 				frame.mMatrix.mapRect(frame.mRealRect, frame.mRectC);
 				frame.mPointP.set(frame.mPointC);
+				frame.mScaleP = frame.mScaleC;
 			}
 			if(mSelectFrame != null){
 				if(checkMenuContains(mDrawableDel)){
@@ -235,7 +241,7 @@ public class ModeFrame extends View {
 			}else{
 				mMenuMode = MenuMode.IDE;
 			}
-			
+			Log.i("TAG", "mMenuMode:" + mMenuMode);
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if(mSelectFrame != null){
@@ -249,25 +255,25 @@ public class ModeFrame extends View {
 					if(tmp < scaleY) tmp = scaleY;
 					
 					if(mIsLock){
-						for (Frame frame : mFrames) {
-							frame.mRectC.left 	= frame.mRectP.left - tmp;
-							frame.mRectC.top   	= frame.mRectP.top - tmp;
-							frame.mRectC.right  = frame.mRectP.right + tmp;
-							frame.mRectC.bottom = frame.mRectP.bottom + tmp;
-						}
-					}else{
-						mSelectFrame.mRectC.left 	= mSelectFrame.mRectP.left - tmp;
-						mSelectFrame.mRectC.top   	= mSelectFrame.mRectP.top - tmp;
-						mSelectFrame.mRectC.right   = mSelectFrame.mRectP.right + tmp;
-						mSelectFrame.mRectC.bottom  = mSelectFrame.mRectP.bottom + tmp;
+//						for (Frame frame : mFrames) {
+//							frame.mRectC.left 	= frame.mRectP.left - tmp;
+//							frame.mRectC.top   	= frame.mRectP.top - tmp;
+//							frame.mRectC.right  = frame.mRectP.right + tmp;
+//							frame.mRectC.bottom = frame.mRectP.bottom + tmp;
+//						}
+//					}else{
+//						mSelectFrame.mRectC.left 	= mSelectFrame.mRectP.left - tmp;
+//						mSelectFrame.mRectC.top   	= mSelectFrame.mRectP.top - tmp;
+//						mSelectFrame.mRectC.right   = mSelectFrame.mRectP.right + tmp;
+//						mSelectFrame.mRectC.bottom  = mSelectFrame.mRectP.bottom + tmp;
 					}
 				case ROTATE:
 					Log.i("TAG", "ROTATE");
-					float rPts[] = new float[]{mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY()};
-					float dPts[] = new float[2];
+					float rPts[]  = new float[]{mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY()};
+					float dPts[]  = new float[2];
 					mSelectFrame.mMenuMatrix.mapPoints(dPts, rPts);
-					double atan1 = Math.atan2(mDownPoint.y - dPts[1], mDownPoint.x - dPts[0]);
-					double atan2 = Math.atan2(y - dPts[1], x - dPts[0]);
+					double atan1  = Math.atan2(mDownPoint.y - dPts[1], mDownPoint.x - dPts[0]);
+					double atan2  = Math.atan2(y - dPts[1], x - dPts[0]);
 					float degrees = Float.valueOf(String.valueOf(180 * atan2/ Math.PI - 180 * atan1 / Math.PI));
 					Log.i("TAG", "degrees:" + degrees);
 					if(mIsLock){
@@ -279,7 +285,7 @@ public class ModeFrame extends View {
 					}
 					break;
 				case MOVE:
-					Log.i("TAG", "IDE-------------------------------------------");
+					Log.i("TAG", "MOVE-------------------------------------------");
 					float rPts1[] = new float[]{x, y};
 					float dPts1[] = new float[2];
 
@@ -287,10 +293,7 @@ public class ModeFrame extends View {
 					float dPts2[] = new float[2];
 					
 					Matrix inverse = new Matrix();
-					mSelectFrame.mMatrix.invert(inverse);
-//					inverse.preTranslate(-mSelectFrame.mPointC.x, -mSelectFrame.mPointC.y);
-//					inverse.postTranslate(-mSelectFrame.mPointC.x, -mSelectFrame.mPointC.y);
-					
+					inverse.preRotate(-mSelectFrame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);
 					inverse.mapPoints(dPts1, rPts1);
 					inverse.mapPoints(dPts2, rPts2);
 					if(mIsLock){
@@ -298,10 +301,12 @@ public class ModeFrame extends View {
 							frame.mPointC.x	= frame.mPointP.x + dPts1[0] - dPts2[0];
 							frame.mPointC.y	= frame.mPointP.y + dPts1[1] - dPts2[1];
 						}
-//					}else{
-//						mSelectFrame.mPointC.x	= mSelectFrame.mPointP.x + dPts1[0] - dPts2[0];
-//						mSelectFrame.mPointC.y	= mSelectFrame.mPointP.y + dPts1[1] - dPts2[1];
+					}else{
+						mSelectFrame.mPointC.x	= mSelectFrame.mPointP.x + dPts1[0] - dPts2[0];
+						mSelectFrame.mPointC.y	= mSelectFrame.mPointP.y + dPts1[1] - dPts2[1];
 					}
+					Log.i("TAG", "mSelectFrame:" + mSelectFrame.mPointP.toString());
+					Log.i("TAG", "mSelectFrame:" + mSelectFrame.mPointC.toString());
 					break;
 				default:
 					break;
@@ -322,25 +327,21 @@ public class ModeFrame extends View {
 					if(mIsLock){
 						for (Frame frame : mFrames) {
 							frame.mMirror = !frame.mMirror;
-							Log.i("TAG", "frame.mMirror:" + frame.mMirror);
 						}
 					}else{
 						mSelectFrame.mMirror = !mSelectFrame.mMirror;
 					}
 					break;
 				case IDE:
-					if(mSelectFrame != null){
-						mSelectFrame.mShowMenu = false;
-						mSelectFrame = null;
-					}
+					mSelectFrame = null;
 					for (Frame frame : mFrames) {
-						frame.mMatrix.mapRect(frame.mRealRect, frame.mRectC);
 						if(frame.mRealRect.contains(mDownPoint.x, mDownPoint.y)){
 							mSelectFrame = frame;
-							mSelectFrame.mShowMenu = true;
 							break;
 						}
 					}
+					break;
+				default:
 					break;
 				}
 			}
@@ -354,19 +355,32 @@ public class ModeFrame extends View {
 	
 	private void checkData(float x, float y) {
 		if(mSelectFrame != null){
-			float rPts1[] = new float[]{x, y};
-			float dPts1[] = new float[2];
-
-			float rPts2[] = new float[]{mDownPoint.x, mDownPoint.y};
-			float dPts2[] = new float[2];
-			
-			Matrix inverse = new Matrix();
-			mSelectFrame.mMatrix.invert(inverse);
-			inverse.mapPoints(dPts1, rPts1);
-			inverse.mapPoints(dPts2, rPts2);
-			
-			Log.i("TAG", "dPts1:" + dPts1[0] + "---" + dPts1[1]);
-			Log.i("TAG", "dPts2:" + dPts2[0] + "---" + dPts2[1]);
+//			Log.i("TAG", "checkData------------------------------------------");
+//			float rPts1[] = new float[]{x, y};
+//			float dPts1[] = new float[2];
+//
+//			float rPts2[] = new float[]{mDownPoint.x, mDownPoint.y};
+//			float dPts2[] = new float[2];
+//			
+//			Log.i("TAG", mSelectFrame.mRectC.toString());
+//			
+//			Log.i("TAG", "rPts1:" + rPts1[0] + "---" + rPts1[1]);
+//			Log.i("TAG", "rPts2:" + rPts2[0] + "---" + rPts2[1]);
+//			
+//			Matrix matrix = mSelectFrame.mMatrix;
+//			Log.i("TAG", matrix.toString());
+//			matrix.mapPoints(dPts1, rPts1);
+//			matrix.mapPoints(dPts2, rPts2);
+//			
+//			Log.i("TAG", "dPts1:" + dPts1[0] + "---" + dPts1[1]);
+//			Log.i("TAG", "dPts2:" + dPts2[0] + "---" + dPts2[1]);
+//			mSelectFrame.mMatrix.invert(matrix);
+//			
+//			matrix.mapPoints(dPts1, rPts1);
+//			matrix.mapPoints(dPts2, rPts2);
+//			
+//			Log.i("TAG", "dPts1:" + dPts1[0] + "---" + dPts1[1]);
+//			Log.i("TAG", "dPts2:" + dPts2[0] + "---" + dPts2[1]);
 		}
 	}
 

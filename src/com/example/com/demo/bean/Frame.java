@@ -10,7 +10,6 @@ import com.example.com.demo.utils.Point;
 public class Frame {
 
 	public RectF	mRectC = new RectF();
-	public RectF	mRectP = new RectF();
 	public Rect		mRect  = new Rect();
 	public RectF	mRealRect = new RectF();
 	
@@ -19,19 +18,21 @@ public class Frame {
 	public float    mDrawableDegreesL;
 	public float    mDrawableDegreesP;
 	
-	public Matrix   mMenuMatrix = new Matrix();
+	public Matrix   mMenuMatrix = new Matrix();//菜单参数
 	
 	public Drawable mDrawable;
-	public Matrix  	mMatrix = new Matrix();
+	public Matrix  	mMatrix = new Matrix();//自身参数
 
-	public boolean  mMirror;
-	public float    mCurrentDegrees;
-	public float    mLastDegrees;
-	public int      mColor;
-	public int      mAlpha;
-	public boolean  mShowMenu;
+	public boolean  mMirror;//是否反转
+	public float    mCurrentDegrees;//当前角度(对应中心点)
+	public float    mLastDegrees;//最终角度
+	public int      mColor;//颜色
+	public int      mAlpha;//透明度
 	
-	public Point 	mPointC = new Point();
-	public Point 	mPointP = new Point();
+	public Point 	mPointC = new Point();//当前位移
+	public Point 	mPointP = new Point();//前一位移:记录在touch down的时候
+	
+	public float    mScaleC;
+	public float    mScaleP;
 	
 }
