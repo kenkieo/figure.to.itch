@@ -1,7 +1,9 @@
-package com.example.com.demo;
+package com.example.com.demo.app;
 
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentTransaction;
 
+import com.example.com.demo.R;
 import com.example.com.demo.basefragmentactivity.BaseTitleFragmentActivity;
 import com.example.com.demo.fragment.mode.StyleFirstFragment;
 import com.example.com.demo.fragment.mode.StyleSecondFragment;
@@ -9,10 +11,13 @@ import com.example.com.demo.fragment.mode.StyleThreeFragment;
 import com.example.com.demo.fragment.style.menu.StyleBottomFragment;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.Mode;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.OnChoiceModeAction;
+import com.example.com.demo.interfaces.OnResourceSelectAction;
+import com.example.com.demo.observers.OnNetBitmapSelectObserver;
+import com.example.com.demo.observers.OnNetBitmapSelectObserver.OnNetBitmapSelectAction;
 import com.example.com.demo.utils.LayoutInflaterUtils;
 import com.example.com.demo.widget.actionbar.menu.ActionbarMenuImageView;
 
-public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction {
+public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction, OnResourceSelectAction, OnNetBitmapSelectAction {
 
 	private StyleBottomFragment mStyleBottomFragment;
 	
@@ -52,6 +57,7 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 
 		mStyleBottomFragment = new StyleBottomFragment();
 		mStyleBottomFragment.setOnChoiceModeAction(this);
+		mStyleBottomFragment.setOnResourceSelectAction(this);
 		ft.add(R.id.layout_framelayout, mStyleBottomFragment);
 		
 		mStyleFirstFragment 	= new StyleFirstFragment();
@@ -71,11 +77,14 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	protected void setSelection(int idx, boolean show) {
 
 	}
-
+	
 	@Override
 	protected void initData() {
 		setTitle(R.string.app_name);
+		OnNetBitmapSelectObserver.getInst().addOnNetBitmapSelectAction(this);
 	}
+	
+	
 	
 	@Override
 	public void onMenuChoiced(Mode mode) {
@@ -100,10 +109,17 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 		}
 		ft.commit();
 	}
-
+	
+	@Override
+	public void onResourceSelect(Drawable drawable) {
+		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
+			mStyleFirstFragment.onResourceSelect(drawable);
+		}
+	}
+	
 	@Override
 	protected void release_BaseTitleFragmentActivity() {
-
+		OnNetBitmapSelectObserver.getInst().removeOnNetBitmapSelectAction(this);
 	}
 
 }

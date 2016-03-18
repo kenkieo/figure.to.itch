@@ -3,8 +3,8 @@ package com.example.com.demo.utils;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.com.demo.MainActivity;
-import com.example.com.demo.ResourceActivity;
+import com.example.com.demo.app.MainActivity;
+import com.example.com.demo.app.ResourceActivity;
 
 public class ActivityUtils {
 

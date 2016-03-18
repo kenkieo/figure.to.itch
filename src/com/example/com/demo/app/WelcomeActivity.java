@@ -1,5 +1,6 @@
-package com.example.com.demo;
+package com.example.com.demo.app;
 
+import com.example.com.demo.R;
 import com.example.com.demo.baseactivity.BaseHandlerActivity;
 import com.example.com.demo.utils.ActivityUtils;
 

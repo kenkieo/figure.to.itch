@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.example.com.demo.observer.ExitActivityObserver;
-import com.example.com.demo.observer.ExitActivityObserver.ExitActivityObserverAction;
+import com.example.com.demo.observers.ExitActivityObserver;
+import com.example.com.demo.observers.ExitActivityObserver.ExitActivityObserverAction;
 import com.example.com.demo.utils.HandlerUtils;
 import com.example.com.demo.widget.actionbar.interfaces.OnActionBarBackAction;
 import com.example.com.demo.widget.actionbar.interfaces.OnActionBarMenuAction;

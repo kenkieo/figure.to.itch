@@ -9,17 +9,16 @@ import android.view.View;
 
 import com.example.com.demo.R;
 import com.example.com.demo.bean.Frame;
-import com.example.com.demo.fragment.BaseHandlerFragment;
 import com.example.com.demo.widget.mode.ModeFrame;
 import com.example.com.demo.widget.mode.ModeFrame.OnLayoutChangeListener;
 
-public class StyleFirstFragment extends BaseHandlerFragment implements OnLayoutChangeListener {
+public class StyleFirstFragment extends StyleContentFrament implements OnLayoutChangeListener {
 	
 	public Drawable mDefaultDrawable;
 	private static final int INIT_NUM = 6;
 	
 	private List<Frame> mFrames;
-	private ModeFrame modeFrame;
+	private ModeFrame mModeFrame;
 	
 	@Override
 	protected int getLayoutRes() {
@@ -29,16 +28,16 @@ public class StyleFirstFragment extends BaseHandlerFragment implements OnLayoutC
 	@Override
 	protected void initViews(View convertView) {
 		mDefaultDrawable = getResources().getDrawable(R.drawable.icon_default_source_1);
-		modeFrame = (ModeFrame) convertView.findViewById(R.id.layout_frame);
-		modeFrame.setIsLock(true);
+		mModeFrame = (ModeFrame) convertView.findViewById(R.id.layout_frame);
+		mModeFrame.setIsLock(true);
 	}
 	
 	@Override
 	protected void initData() {
 		super.initData();
 		mFrames = new ArrayList<Frame>();
-		modeFrame.setFrames(mFrames);
-		modeFrame.setOnLayoutChangeListener(this);
+		mModeFrame.setFrames(mFrames);
+		mModeFrame.setOnLayoutChangeListener(this);
 	}
 	
 	@Override
@@ -51,14 +50,17 @@ public class StyleFirstFragment extends BaseHandlerFragment implements OnLayoutC
 			frame.mCurrentDegrees = 0;
 			frame.mLastDegrees = degrees * i;
 			frame.mDrawable = mDefaultDrawable;
-			frame.mRectC.set(modeFrame.getRectF());
+			frame.mRectC.set(mModeFrame.getRectF());
 			mFrames.add(frame);
 		}
-		modeFrame.startAnimation();
+		mModeFrame.startAnimation();
 	}
 	
-	private int getVertexX(int left, int right){
-		return 0;
+	@Override
+	public void onResourceSelect(Drawable drawable) {
+		if(mModeFrame != null){
+			mModeFrame.setonResourceSelect(drawable);
+		}
 	}
 	
 	@Override

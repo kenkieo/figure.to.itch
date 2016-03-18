@@ -1,5 +1,6 @@
 package com.example.com.demo.fragment.style.menu;
 
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
@@ -7,17 +8,19 @@ import com.example.com.demo.R;
 import com.example.com.demo.fragment.BaseHandlerFragment;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.Mode;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.OnChoiceModeAction;
+import com.example.com.demo.interfaces.OnResourceSelectAction;
 import com.example.com.demo.widget.StyleMenuLayout;
 import com.example.com.demo.widget.StyleMenuLayout.OnStyleMenuClickAction;
 
-public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleMenuClickAction, OnChoiceModeAction{
+public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleMenuClickAction, OnChoiceModeAction, OnResourceSelectAction{
 
 	private StyleMenuLayout mStyleMenuLayout;
 	
 	private StyleModeFragment 		mStyleModeFragment;
 	private StyleResourceFragment 	mStyleResourceFragment;
 	
-	private OnChoiceModeAction		mAction;
+	private OnChoiceModeAction		mChoiceModeAction;
+	private OnResourceSelectAction	mOnResourceSelectAction;
 	
 	@Override
 	protected int getLayoutRes() {
@@ -50,6 +53,7 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		ft.add(R.id.fragment_style_bottom_layout_content, mStyleModeFragment);
 		
 		mStyleResourceFragment = new StyleResourceFragment();
+		mStyleResourceFragment.setOnResourceSelectAction(this);
 		ft.add(R.id.fragment_style_bottom_layout_content, mStyleResourceFragment);
 		ft.hide(mStyleResourceFragment);
 		ft.commit();	
@@ -83,13 +87,24 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 	
 	@Override
 	public void onMenuChoiced(Mode mode) {
-		if(mAction != null){
-			mAction.onMenuChoiced(mode);
+		if(mChoiceModeAction != null){
+			mChoiceModeAction.onMenuChoiced(mode);
+		}
+	}
+	
+	@Override
+	public void onResourceSelect(Drawable drawable) {
+		if(mOnResourceSelectAction != null){
+			mOnResourceSelectAction.onResourceSelect(drawable);
 		}
 	}
 	
 	public void setOnChoiceModeAction(OnChoiceModeAction action) {
-		this.mAction = action;
+		this.mChoiceModeAction = action;
+	}
+	
+	public void setOnResourceSelectAction(OnResourceSelectAction action) {
+		this.mOnResourceSelectAction = action;
 	}
 	
 	@Override

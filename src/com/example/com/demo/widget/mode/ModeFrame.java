@@ -411,6 +411,19 @@ public class ModeFrame extends View {
 		this.mChangeListener = l;
 	}
 	
+	public void setonResourceSelect(Drawable drawable){
+		if(!mIsLock){
+			if(mSelectFrame != null){
+				mSelectFrame.mDrawable = drawable;
+			}
+		}else {
+			for (int i = 0; i < mFrames.size(); i++) {
+				mFrames.get(i).mDrawable = drawable;
+			}
+		}
+		invalidate();
+	}
+	
 	public interface OnLayoutChangeListener{
 		void onLayoutChange();
 	}

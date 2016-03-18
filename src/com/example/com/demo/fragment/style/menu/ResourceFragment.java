@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.GridView;
 
@@ -14,6 +17,8 @@ import com.example.com.demo.bean.EntityResourceIconBean;
 import com.example.com.demo.fragment.BaseHandlerFragment;
 import com.example.com.demo.http.IProtocolListener;
 import com.example.com.demo.http.protocol.ProtocolGetImgs;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 public class ResourceFragment extends BaseHandlerFragment implements OnIconItemAction{
 	
@@ -22,6 +27,8 @@ public class ResourceFragment extends BaseHandlerFragment implements OnIconItemA
 	private GridView 			mGridView;
 	private ResourceIconAdapter mAdapter;
 	private List<EntityResourceIconBean> mBeans;
+	
+	private Drawable mSelectedDrawable;
 
 	@Override
 	protected int getLayoutRes() {
@@ -40,6 +47,7 @@ public class ResourceFragment extends BaseHandlerFragment implements OnIconItemA
 		if(code.equals(mCode)){
 			return;
 		}
+		mSelectedDrawable = null;
 		this.mCode = code;
 		if(loadDataAble()){
 			mBeans.clear();
@@ -71,12 +79,39 @@ public class ResourceFragment extends BaseHandlerFragment implements OnIconItemA
 	
 	@Override
 	public void onItemSelected(int position) {
-		
+		EntityResourceIconBean bean = mBeans.get(position);
+		ImageLoader.getInstance().loadImage(bean.url, new SimpleImageLoadingListener(){
+			
+			@Override
+			public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+				super.onLoadingComplete(imageUri, view, loadedImage);
+				mSelectedDrawable = new BitmapDrawable(loadedImage);
+			}
+		});
+	}
+	
+	public Drawable getSelectedDrawable() {
+		return mSelectedDrawable;
 	}
 	
 	@Override
 	protected void releaseHandlerFragment() {
+		mProtocolGetImgs = null;
+		if(mGridView != null){
+			mGridView.setAdapter(null);
+			mGridView = null;
+		}
 		
+		if(mAdapter != null){
+			mAdapter.releaseAdapter();
+			mAdapter = null;
+		}
+		
+		if(mBeans != null){
+			mBeans.clear();
+			mBeans = null;
+		}
+		mSelectedDrawable = null;
 	}
 
 }

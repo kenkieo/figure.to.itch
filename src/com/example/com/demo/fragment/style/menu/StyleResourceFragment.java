@@ -1,5 +1,6 @@
 package com.example.com.demo.fragment.style.menu;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 
 import com.example.com.demo.R;
 import com.example.com.demo.fragment.BaseHandlerFragment;
+import com.example.com.demo.interfaces.OnResourceSelectAction;
 import com.example.com.demo.utils.ActivityUtils;
 import com.example.com.demo.utils.LayoutInflaterUtils;
 /**
@@ -22,6 +24,7 @@ public class StyleResourceFragment extends BaseHandlerFragment implements OnClic
 		R.drawable.icon_default_source_5, R.drawable.icon_default_source_6, R.drawable.icon_default_source_7,
 		R.drawable.icon_default_source_8, R.drawable.icon_default_source_9, R.drawable.icon_default_source_10};
 	private View mClickView;
+	private OnResourceSelectAction mAction;
 	
 	@Override
 	protected int getLayoutRes() {
@@ -38,6 +41,7 @@ public class StyleResourceFragment extends BaseHandlerFragment implements OnClic
 	private void addItemFirst(){
 		View convertView = LayoutInflaterUtils.inflateView(mParent, R.layout.fragment_style_resource_add);
 		convertView.setOnClickListener(this);
+		convertView.setTag(0);
 		mContentLayout.addView(convertView);
 	}
 	
@@ -47,6 +51,7 @@ public class StyleResourceFragment extends BaseHandlerFragment implements OnClic
 			ImageView mItemIcon = (ImageView) convertView.findViewById(R.id.layout_resource_item_icon);
 			mItemIcon.setImageResource(resId);
 			mItemIcon.setOnClickListener(this);
+			mItemIcon.setTag(resId);
 			mContentLayout.addView(convertView);
 		}
 	}
@@ -68,12 +73,32 @@ public class StyleResourceFragment extends BaseHandlerFragment implements OnClic
 		mClickView = v;
 		if(mClickView != null){
 			mClickView.setSelected(true);
+			int resId = 0;
+			try {
+				resId = Integer.parseInt(mClickView.getTag().toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			Log.i("TAG", "resId:" + resId);
+			if(resId > 0){
+				if(mAction != null){
+					mAction.onResourceSelect(getResources().getDrawable(resId));
+				}
+			}
 		}
+	}
+	
+	public void setOnResourceSelectAction(OnResourceSelectAction action) {
+		this.mAction = action;
 	}
 	
 	@Override
 	protected void releaseHandlerFragment() {
-		
+		if(mContentLayout != null){
+			mContentLayout.removeAllViews();
+			mContentLayout = null;
+		}
+		mClickView = null;
 	}
 
 }
