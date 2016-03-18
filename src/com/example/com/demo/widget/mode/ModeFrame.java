@@ -71,7 +71,6 @@ public class ModeFrame extends View {
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		Log.i("TAG", "onDraw-----------------");
 		if(mFrames != null){
 			int size = mFrames.size();
 			for (int i = 0; i < size; i++) {
@@ -79,10 +78,11 @@ public class ModeFrame extends View {
 				canvas.save();
 				Matrix matrix = canvas.getMatrix();
 
-				matrix.preRotate(frame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);
-				matrix.preTranslate(frame.mPointC.x, frame.mPointC.y);
-				matrix.preRotate(frame.mDrawableDegreesC, frame.mRectC.centerX(), frame.mRectC.centerY());
-				matrix.preScale(frame.mMirror ? -1 : 1, 1, frame.mRectC.centerX(), frame.mRectC.centerY());
+				matrix.preRotate(frame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);//绕中心点旋转
+				matrix.preTranslate(frame.mPointC.x, frame.mPointC.y);//移动
+				matrix.preRotate(frame.mDrawableDegreesC, frame.mRectC.centerX(), frame.mRectC.centerY());//自身旋转
+				matrix.preScale(frame.mMirror ? -1 : 1, 1, frame.mRectC.centerX(), frame.mRectC.centerY());//自身反转
+				matrix.preScale(frame.mScaleC, frame.mScaleC, frame.mRectC.centerX(), frame.mRectC.centerY());//自身放大
 				canvas.concat(matrix);
 				
 				mPaint.setStyle(Style.FILL);
@@ -106,6 +106,7 @@ public class ModeFrame extends View {
 			matrix.preRotate(mSelectFrame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);
 			matrix.preTranslate(mSelectFrame.mPointC.x, mSelectFrame.mPointC.y);
 			matrix.preRotate(mSelectFrame.mDrawableDegreesC, mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY());
+			matrix.preScale(mSelectFrame.mScaleC, mSelectFrame.mScaleC, mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY());
 			canvas.concat(matrix);
 			
 			drawMenu(canvas, mSelectFrame.mRectC);
@@ -176,7 +177,6 @@ public class ModeFrame extends View {
 	}
 	
 	protected void handleMessage(Message msg) {
-		Log.i("TAG", "handleMessage");
 		boolean stop = true;
 		for (int i = 0; i < mFrames.size(); i++) {
 			Frame frame = mFrames.get(i);
@@ -248,34 +248,49 @@ public class ModeFrame extends View {
 				switch (mMenuMode) {
 				case DEL:
 					break;
-				case SCALE:
-					float scaleX = Math.abs(mDownPoint.x - x);
-					float scaleY = Math.abs(mDownPoint.y - y);
-					float tmp = scaleX;
-					if(tmp < scaleY) tmp = scaleY;
+				case SCALE:{
+					float rPts1[] = new float[]{x, y};
+					float dPts1[] = new float[2];
+
+					float rPts2[] = new float[]{mDownPoint.x, mDownPoint.y};
+					float dPts2[] = new float[2];
+					
+					Matrix inverse = new Matrix();
+					mSelectFrame.mMatrix.invert(inverse);
+					Log.i("TAG", inverse.toString());
+//					inverse.preScale(1 / mSelectFrame.mScaleC, 1 / mSelectFrame.mScaleC, mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY());
+					Log.i("TAG", inverse.toString());
+					
+					dPts1[0] = dPts1[0] - mSelectFrame.mRectC.centerX();
+					dPts1[1] = dPts1[1] - mSelectFrame.mRectC.centerY();
+					
+					dPts2[0] = dPts2[0] - mSelectFrame.mRectC.centerX();
+					dPts2[1] = dPts2[1] - mSelectFrame.mRectC.centerY();
+					
+					inverse.mapPoints(dPts1, rPts1);
+					inverse.mapPoints(dPts2, rPts2);
+					
+					float radiusM = Float.parseFloat(String.valueOf(Math.sqrt(Double.parseDouble(String.valueOf(dPts1[0] * dPts1[0] + dPts1[1] * dPts1[1])))));//点击时的圆半径
+					float radiusD = Float.parseFloat(String.valueOf(Math.sqrt(Double.parseDouble(String.valueOf(dPts2[0] * dPts2[0] + dPts2[1] * dPts2[1])))));//移动时的圆半径
+					
+					float scale = radiusM / radiusD;
 					
 					if(mIsLock){
-//						for (Frame frame : mFrames) {
-//							frame.mRectC.left 	= frame.mRectP.left - tmp;
-//							frame.mRectC.top   	= frame.mRectP.top - tmp;
-//							frame.mRectC.right  = frame.mRectP.right + tmp;
-//							frame.mRectC.bottom = frame.mRectP.bottom + tmp;
-//						}
-//					}else{
-//						mSelectFrame.mRectC.left 	= mSelectFrame.mRectP.left - tmp;
-//						mSelectFrame.mRectC.top   	= mSelectFrame.mRectP.top - tmp;
-//						mSelectFrame.mRectC.right   = mSelectFrame.mRectP.right + tmp;
-//						mSelectFrame.mRectC.bottom  = mSelectFrame.mRectP.bottom + tmp;
+						for (Frame frame : mFrames) {
+							frame.mScaleC = frame.mScaleP * scale;
+						}
+					}else{
+						mSelectFrame.mScaleC = mSelectFrame.mScaleP * scale;
 					}
+				}
 				case ROTATE:
-					Log.i("TAG", "ROTATE");
+					Log.i("TAG", "ROTATE-------------------------------------------");
 					float rPts[]  = new float[]{mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY()};
 					float dPts[]  = new float[2];
 					mSelectFrame.mMenuMatrix.mapPoints(dPts, rPts);
 					double atan1  = Math.atan2(mDownPoint.y - dPts[1], mDownPoint.x - dPts[0]);
 					double atan2  = Math.atan2(y - dPts[1], x - dPts[0]);
 					float degrees = Float.valueOf(String.valueOf(180 * atan2/ Math.PI - 180 * atan1 / Math.PI));
-					Log.i("TAG", "degrees:" + degrees);
 					if(mIsLock){
 						for (Frame frame : mFrames) {
 							frame.mDrawableDegreesC = frame.mDrawableDegreesP + degrees;
@@ -305,8 +320,6 @@ public class ModeFrame extends View {
 						mSelectFrame.mPointC.x	= mSelectFrame.mPointP.x + dPts1[0] - dPts2[0];
 						mSelectFrame.mPointC.y	= mSelectFrame.mPointP.y + dPts1[1] - dPts2[1];
 					}
-					Log.i("TAG", "mSelectFrame:" + mSelectFrame.mPointP.toString());
-					Log.i("TAG", "mSelectFrame:" + mSelectFrame.mPointC.toString());
 					break;
 				default:
 					break;
@@ -355,32 +368,6 @@ public class ModeFrame extends View {
 	
 	private void checkData(float x, float y) {
 		if(mSelectFrame != null){
-//			Log.i("TAG", "checkData------------------------------------------");
-//			float rPts1[] = new float[]{x, y};
-//			float dPts1[] = new float[2];
-//
-//			float rPts2[] = new float[]{mDownPoint.x, mDownPoint.y};
-//			float dPts2[] = new float[2];
-//			
-//			Log.i("TAG", mSelectFrame.mRectC.toString());
-//			
-//			Log.i("TAG", "rPts1:" + rPts1[0] + "---" + rPts1[1]);
-//			Log.i("TAG", "rPts2:" + rPts2[0] + "---" + rPts2[1]);
-//			
-//			Matrix matrix = mSelectFrame.mMatrix;
-//			Log.i("TAG", matrix.toString());
-//			matrix.mapPoints(dPts1, rPts1);
-//			matrix.mapPoints(dPts2, rPts2);
-//			
-//			Log.i("TAG", "dPts1:" + dPts1[0] + "---" + dPts1[1]);
-//			Log.i("TAG", "dPts2:" + dPts2[0] + "---" + dPts2[1]);
-//			mSelectFrame.mMatrix.invert(matrix);
-//			
-//			matrix.mapPoints(dPts1, rPts1);
-//			matrix.mapPoints(dPts2, rPts2);
-//			
-//			Log.i("TAG", "dPts1:" + dPts1[0] + "---" + dPts1[1]);
-//			Log.i("TAG", "dPts2:" + dPts2[0] + "---" + dPts2[1]);
 		}
 	}
 

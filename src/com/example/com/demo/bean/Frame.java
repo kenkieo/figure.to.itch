@@ -32,7 +32,7 @@ public class Frame {
 	public Point 	mPointC = new Point();//当前位移
 	public Point 	mPointP = new Point();//前一位移:记录在touch down的时候
 	
-	public float    mScaleC;
+	public float    mScaleC = 1;
 	public float    mScaleP;
 	
 }
