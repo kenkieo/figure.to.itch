@@ -27,7 +27,7 @@ public class Frame {
 	public float    mCurrentDegrees;//当前角度(对应中心点)
 	public float    mLastDegrees;//最终角度
 	public int      mColor;//颜色
-	public int      mAlpha;//透明度
+	public int      mAlpha = 255;//透明度
 	
 	public Point 	mPointC = new Point();//当前位移
 	public Point 	mPointP = new Point();//前一位移:记录在touch down的时候

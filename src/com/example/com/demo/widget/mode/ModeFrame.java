@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -19,15 +20,14 @@ import android.view.View;
 
 import com.example.com.demo.R;
 import com.example.com.demo.bean.Frame;
+import com.example.com.demo.interfaces.OnParameterChangeListener;
 import com.example.com.demo.utils.DisplayUtils;
 import com.example.com.demo.utils.MyHandler;
 import com.example.com.demo.utils.Point;
 
-public class ModeFrame extends View {
+public class ModeFrame extends View implements OnParameterChangeListener{
 
 	private static final int POINT_DEGREES	= 10;
-	private static final int POINT_DISTANCE	= 10;
-	private static final int INIT_NUM		= 6;
 	private static final int INIT_FRAME		= 100;
 	private static final long DELAY_TIME	= 10;
 	
@@ -51,6 +51,19 @@ public class ModeFrame extends View {
 	private Drawable mDrawableReversal;
 	private Drawable mDrawableScale;
 	private MenuMode mMenuMode;
+	
+	private RectF	mRectC = new RectF();
+	private Rect	mRect  = new Rect();
+	private float   mDrawableDegreesC;
+	public Drawable mDrawable;
+	public boolean  mMirror;//是否反转
+	public float    mCurrentDegrees;//当前角度(对应中心点)
+	public float    mLastDegrees;//最终角度
+	public int      mColor;//颜色
+	public int      mAlpha = 255;//透明度
+	
+	public float    mScaleC = 1;
+	public float    mScaleP;
 	
 	public ModeFrame(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -88,10 +101,10 @@ public class ModeFrame extends View {
 				mPaint.setStyle(Style.FILL);
 				canvas.drawLine(0, 0, getWidth(), frame.mPointC.y, mPaint);
 
-
 				frame.mRectC.round(frame.mRect);
 				frame.mDrawable.setBounds(frame.mRect);
 				frame.mDrawable.setColorFilter(frame.mColor | 0xFF000000, Mode.SRC_IN);
+				frame.mDrawable.setAlpha(frame.mAlpha);
 				frame.mDrawable.draw(canvas);
 				frame.mMatrix.set(canvas.getMatrix());
 				canvas.restore();
@@ -211,7 +224,6 @@ public class ModeFrame extends View {
 		int action = event.getAction();
 		float x = event.getX();
 		float y = event.getY();
-		checkData(x, y);
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
 			mDownPoint.x = x;
@@ -241,7 +253,6 @@ public class ModeFrame extends View {
 			}else{
 				mMenuMode = MenuMode.IDE;
 			}
-			Log.i("TAG", "mMenuMode:" + mMenuMode);
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if(mSelectFrame != null){
@@ -257,9 +268,6 @@ public class ModeFrame extends View {
 					
 					Matrix inverse = new Matrix();
 					mSelectFrame.mMatrix.invert(inverse);
-					Log.i("TAG", inverse.toString());
-//					inverse.preScale(1 / mSelectFrame.mScaleC, 1 / mSelectFrame.mScaleC, mSelectFrame.mRectC.centerX(), mSelectFrame.mRectC.centerY());
-					Log.i("TAG", inverse.toString());
 					
 					dPts1[0] = dPts1[0] - mSelectFrame.mRectC.centerX();
 					dPts1[1] = dPts1[1] - mSelectFrame.mRectC.centerY();
@@ -295,6 +303,7 @@ public class ModeFrame extends View {
 						for (Frame frame : mFrames) {
 							frame.mDrawableDegreesC = frame.mDrawableDegreesP + degrees;
 						}
+						mDrawableDegreesC = mSelectFrame.mDrawableDegreesC;
 					}else{
 						mSelectFrame.mDrawableDegreesC = mSelectFrame.mDrawableDegreesP + degrees;
 					}
@@ -365,11 +374,6 @@ public class ModeFrame extends View {
 		invalidate();
 		return true;
 	}
-	
-	private void checkData(float x, float y) {
-		if(mSelectFrame != null){
-		}
-	}
 
 	private boolean checkMenuContains(Drawable drawable){
 		RectF mDst = new RectF();
@@ -422,6 +426,44 @@ public class ModeFrame extends View {
 			}
 		}
 		invalidate();
+	}
+	
+	@Override
+	public void onAlphaChange(int alpha) {
+		if(!mIsLock){
+			if(mSelectFrame != null){
+				mSelectFrame.mAlpha = alpha  * 255 / 100;
+			}
+		}else {
+			for (int i = 0; i < mFrames.size(); i++) {
+				mFrames.get(i).mAlpha = alpha  * 255 / 100;
+			}
+		}
+		invalidate();
+	}
+	
+	@Override
+	public void onColorChange(int color) {
+		if(!mIsLock){
+			if(mSelectFrame != null){
+				mSelectFrame.mColor = color;
+			}
+		}else {
+			for (int i = 0; i < mFrames.size(); i++) {
+				mFrames.get(i).mColor = color;
+			}
+		}
+		invalidate();
+	}
+	
+	@Override
+	public void onTimesChange(int times) {
+		int size = mFrames.size();
+		if(times > size){
+			
+		}else{
+			
+		}
 	}
 	
 	public interface OnLayoutChangeListener{

@@ -63,9 +63,24 @@ public class StyleFirstFragment extends StyleContentFrament implements OnLayoutC
 		}
 	}
 	
+	public void onAlphaChange(int alpha) {
+		if(mModeFrame != null){
+			mModeFrame.onAlphaChange(alpha);
+		}
+	}
+	
 	@Override
-	protected void releaseHandlerFragment() {
-		
+	public void onColorChange(int color) {
+		if(mModeFrame != null){
+			mModeFrame.onColorChange(color);
+		}
+	}
+	
+	@Override
+	public void onTimesChange(int times) {
+		if(mModeFrame != null){
+			mModeFrame.onTimesChange(times);
+		}
 	}
 
 }

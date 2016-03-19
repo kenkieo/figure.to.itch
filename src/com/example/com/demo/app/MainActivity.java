@@ -11,13 +11,14 @@ import com.example.com.demo.fragment.mode.StyleThreeFragment;
 import com.example.com.demo.fragment.style.menu.StyleBottomFragment;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.Mode;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.OnChoiceModeAction;
+import com.example.com.demo.interfaces.OnParameterChangeListener;
 import com.example.com.demo.interfaces.OnResourceSelectAction;
 import com.example.com.demo.observers.OnNetBitmapSelectObserver;
 import com.example.com.demo.observers.OnNetBitmapSelectObserver.OnNetBitmapSelectAction;
 import com.example.com.demo.utils.LayoutInflaterUtils;
 import com.example.com.demo.widget.actionbar.menu.ActionbarMenuImageView;
 
-public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction, OnResourceSelectAction, OnNetBitmapSelectAction {
+public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction, OnResourceSelectAction, OnNetBitmapSelectAction, OnParameterChangeListener {
 
 	private StyleBottomFragment mStyleBottomFragment;
 	
@@ -58,6 +59,7 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 		mStyleBottomFragment = new StyleBottomFragment();
 		mStyleBottomFragment.setOnChoiceModeAction(this);
 		mStyleBottomFragment.setOnResourceSelectAction(this);
+		mStyleBottomFragment.setOnParameterChangeListener(this);
 		ft.add(R.id.layout_framelayout, mStyleBottomFragment);
 		
 		mStyleFirstFragment 	= new StyleFirstFragment();
@@ -114,6 +116,27 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	public void onResourceSelect(Drawable drawable) {
 		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
 			mStyleFirstFragment.onResourceSelect(drawable);
+		}
+	}
+	
+	@Override
+	public void onAlphaChange(int alpha) {
+		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
+			mStyleFirstFragment.onAlphaChange(alpha);
+		}
+	}
+	
+	@Override
+	public void onTimesChange(int times) {
+		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
+			mStyleFirstFragment.onTimesChange(times);
+		}
+	}
+	
+	@Override
+	public void onColorChange(int color) {
+		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
+			mStyleFirstFragment.onColorChange(color);
 		}
 	}
 	

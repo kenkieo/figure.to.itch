@@ -7,4 +7,6 @@
 	<string name="text_menu_mode">模式</string>
 	<string name="text_menu_material">素材</string>
 	<string name="text_menu_parameter">参数</string>
+	<string name="text_parameter_times">旋转次数</string>
+	<string name="text_parameter_alpha">透明度</string>
 </resources>

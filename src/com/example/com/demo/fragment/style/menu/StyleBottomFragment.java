@@ -8,19 +8,23 @@ import com.example.com.demo.R;
 import com.example.com.demo.fragment.BaseHandlerFragment;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.Mode;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.OnChoiceModeAction;
+import com.example.com.demo.interfaces.OnHideParameterAction;
+import com.example.com.demo.interfaces.OnParameterChangeListener;
 import com.example.com.demo.interfaces.OnResourceSelectAction;
 import com.example.com.demo.widget.StyleMenuLayout;
 import com.example.com.demo.widget.StyleMenuLayout.OnStyleMenuClickAction;
 
-public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleMenuClickAction, OnChoiceModeAction, OnResourceSelectAction{
+public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleMenuClickAction, OnChoiceModeAction, OnResourceSelectAction, OnParameterChangeListener, OnHideParameterAction{
 
 	private StyleMenuLayout mStyleMenuLayout;
 	
 	private StyleModeFragment 		mStyleModeFragment;
 	private StyleResourceFragment 	mStyleResourceFragment;
+	private StyleParameterFragment	mStyleParameterFragment;
 	
 	private OnChoiceModeAction		mChoiceModeAction;
 	private OnResourceSelectAction	mOnResourceSelectAction;
+	private OnParameterChangeListener mOnParameterChangeListener;
 	
 	@Override
 	protected int getLayoutRes() {
@@ -56,6 +60,12 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		mStyleResourceFragment.setOnResourceSelectAction(this);
 		ft.add(R.id.fragment_style_bottom_layout_content, mStyleResourceFragment);
 		ft.hide(mStyleResourceFragment);
+		
+		mStyleParameterFragment = new StyleParameterFragment();
+		mStyleParameterFragment.setOnParameterChangeListener(this);
+		mStyleParameterFragment.setOnHideParameterAction(this);
+		ft.add(R.id.fragment_style_bottom_layout, mStyleParameterFragment);
+		ft.hide(mStyleParameterFragment);
 		ft.commit();	
 	}
 	
@@ -64,11 +74,14 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		switch (position) {
 		case StyleMenuLayout.MENU_MODE:
 			showStyleResourceFragment(false);
+			showStyleParameterFragment(false);
 			break;
 		case StyleMenuLayout.MENU_RESOURCE:
 			showStyleResourceFragment(true);
+			showStyleParameterFragment(false);
 			break;
 		case StyleMenuLayout.MENU_PARAMETER:
+			showStyleParameterFragment(true);
 			break;
 		}
 	}
@@ -81,6 +94,18 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		}else if(!mStyleResourceFragment.isHidden() && !shown){
 			ft.setCustomAnimations(0, R.anim.translate_from_bottom_out);
 			ft.hide(mStyleResourceFragment);
+		}
+		ft.commit();
+	}
+	
+	private void showStyleParameterFragment(boolean shown){
+		FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+		if(shown && mStyleParameterFragment.isHidden()){
+			ft.setCustomAnimations(R.anim.translate_from_bottom_in, 0);
+			ft.show(mStyleParameterFragment);
+		}else if(!mStyleParameterFragment.isHidden() && !shown){
+			ft.setCustomAnimations(0, R.anim.translate_from_bottom_out);
+			ft.hide(mStyleParameterFragment);
 		}
 		ft.commit();
 	}
@@ -99,6 +124,27 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		}
 	}
 	
+	@Override
+	public void onAlphaChange(int alpha) {
+		if(mOnParameterChangeListener != null){
+			mOnParameterChangeListener.onAlphaChange(alpha);
+		}
+	}
+	
+	@Override
+	public void onColorChange(int color) {
+		if(mOnParameterChangeListener != null){
+			mOnParameterChangeListener.onColorChange(color);
+		}
+	}
+	
+	@Override
+	public void onTimesChange(int times) {
+		if(mOnParameterChangeListener != null){
+			mOnParameterChangeListener.onTimesChange(times);
+		}
+	}
+	
 	public void setOnChoiceModeAction(OnChoiceModeAction action) {
 		this.mChoiceModeAction = action;
 	}
@@ -107,9 +153,39 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		this.mOnResourceSelectAction = action;
 	}
 	
+	public void setOnParameterChangeListener(OnParameterChangeListener l) {
+		this.mOnParameterChangeListener = l;
+	}
+	
+	@Override
+	public void onHideParameter() {
+		showStyleParameterFragment(false);
+	}
+	
 	@Override
 	protected void releaseHandlerFragment() {
+		mChoiceModeAction = null;
+		mOnResourceSelectAction = null;
+		mOnParameterChangeListener = null;
+		if(mStyleMenuLayout != null){
+			mStyleMenuLayout.removeAllViews();
+		}
 		
+		if(mStyleModeFragment != null){
+			mStyleModeFragment.setOnChoiceModeAction(null);
+			mStyleModeFragment = null;
+		}
+		
+		if(mStyleResourceFragment != null){
+			mStyleResourceFragment.setOnResourceSelectAction(null);
+			mStyleResourceFragment = null;
+		}
+		
+		if(mStyleParameterFragment != null){
+			mStyleParameterFragment.setOnParameterChangeListener(null);
+			mStyleParameterFragment.setOnHideParameterAction(null);
+			mStyleParameterFragment = null;
+		}
 	}
 
 }
