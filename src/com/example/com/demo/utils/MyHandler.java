@@ -22,7 +22,7 @@ public class MyHandler extends Handler {
 				Class<?> cls = wr.get().getClass();
 				Method method = cls.getDeclaredMethod("handleMessage", Message.class);
 				method.setAccessible(true);
-				method.invoke(wr.get(), new Message());
+				method.invoke(wr.get(), msg);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

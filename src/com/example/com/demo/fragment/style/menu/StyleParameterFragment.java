@@ -8,6 +8,7 @@ import com.example.com.demo.R;
 import com.example.com.demo.fragment.BaseHandlerFragment;
 import com.example.com.demo.interfaces.OnHideParameterAction;
 import com.example.com.demo.interfaces.OnParameterChangeListener;
+import com.example.com.demo.utils.Constants;
 import com.example.com.demo.view.CustomSeekBar;
 import com.example.com.demo.view.CustomSeekBar.OnSeekBarChangeListener;
 
@@ -36,7 +37,8 @@ public class StyleParameterFragment extends BaseHandlerFragment implements OnSee
 		mTimesSeekBar = (CustomSeekBar) convertView.findViewById(R.id.fragment_style_parameter_times_seek);
 		mAlphaSeekBar = (CustomSeekBar) convertView.findViewById(R.id.fragment_style_parameter_alpha_seek);
 		
-		mTimesSeekBar.setProgress(2);
+		mTimesSeekBar.setProgress(Constants.INIT_NUM);
+		mTimesSeekBar.setMin(Constants.MIN_NUM);
 		mTimesSeekBar.setMax(12);
 		
 		mAlphaSeekBar.setProgress(100);
@@ -57,6 +59,12 @@ public class StyleParameterFragment extends BaseHandlerFragment implements OnSee
 			if(mOnParameterChangeListener != null){
 				mOnParameterChangeListener.onAlphaChange(progress);
 			}
+		}
+	}
+	
+	public void setTimesSeekBarProgress(int progress){
+		if(mTimesSeekBar != null){
+			mTimesSeekBar.setProgress(progress);
 		}
 	}
 	

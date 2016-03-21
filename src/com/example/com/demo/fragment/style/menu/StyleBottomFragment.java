@@ -18,13 +18,13 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 
 	private StyleMenuLayout mStyleMenuLayout;
 	
-	private StyleModeFragment 		mStyleModeFragment;
-	private StyleResourceFragment 	mStyleResourceFragment;
-	private StyleParameterFragment	mStyleParameterFragment;
+	private StyleModeFragment 			mStyleModeFragment;
+	private StyleResourceFragment 		mStyleResourceFragment;
+	private StyleParameterFragment		mStyleParameterFragment;
 	
-	private OnChoiceModeAction		mChoiceModeAction;
-	private OnResourceSelectAction	mOnResourceSelectAction;
-	private OnParameterChangeListener mOnParameterChangeListener;
+	private OnChoiceModeAction			mChoiceModeAction;
+	private OnResourceSelectAction		mOnResourceSelectAction;
+	private OnParameterChangeListener 	mOnParameterChangeListener;
 	
 	@Override
 	protected int getLayoutRes() {
@@ -160,6 +160,24 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 	@Override
 	public void onHideParameter() {
 		showStyleParameterFragment(false);
+	}
+	
+	public void setTimesSeekBarProgress(int progress){
+		if(mStyleParameterFragment != null){
+			mStyleParameterFragment.setTimesSeekBarProgress(progress);
+		}
+	}
+	
+	@Override
+	public boolean onBackPressed() {
+		if(mStyleParameterFragment != null && !mStyleParameterFragment.isHidden()){
+			showStyleParameterFragment(false);
+			return true;
+		}else if(mStyleResourceFragment != null && !mStyleResourceFragment.isHidden()){
+			showStyleResourceFragment(false);
+			return true;
+		} 
+		return super.onBackPressed();
 	}
 	
 	@Override

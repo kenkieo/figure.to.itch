@@ -2,6 +2,7 @@ package com.example.com.demo.utils;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class HandlerUtils {
 	
@@ -56,6 +57,7 @@ public class HandlerUtils {
 	}
 	
 	public static final void removeCallbacksAndMessages(Handler handler){
+		Log.i("TAG", "removeCallbacksAndMessages");
 		if(handler != null){
 			handler.removeCallbacksAndMessages(null);
 		}

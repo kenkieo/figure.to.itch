@@ -93,6 +93,10 @@ public abstract class BaseHandlerFragment extends BaseFragment{
 		removeCallbacksAndMessages();
 		releaseHandlerFragment();
 	}
+	
+	public boolean onBackPressed(){
+		return false;
+	}
 
 	/**
 	 * 释放资源 widget = 2

@@ -18,7 +18,7 @@ import com.example.com.demo.observers.OnNetBitmapSelectObserver.OnNetBitmapSelec
 import com.example.com.demo.utils.LayoutInflaterUtils;
 import com.example.com.demo.widget.actionbar.menu.ActionbarMenuImageView;
 
-public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction, OnResourceSelectAction, OnNetBitmapSelectAction, OnParameterChangeListener {
+public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction, OnResourceSelectAction, OnNetBitmapSelectAction, OnParameterChangeListener{
 
 	private StyleBottomFragment mStyleBottomFragment;
 	
@@ -77,7 +77,7 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 
 	@Override
 	protected void setSelection(int idx, boolean show) {
-
+		
 	}
 	
 	@Override
@@ -85,8 +85,6 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 		setTitle(R.string.app_name);
 		OnNetBitmapSelectObserver.getInst().addOnNetBitmapSelectAction(this);
 	}
-	
-	
 	
 	@Override
 	public void onMenuChoiced(Mode mode) {
@@ -97,6 +95,7 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 			ft.show(mStyleFirstFragment);
 			ft.hide(mStyleSecondFragment);
 			ft.hide(mStyleThreeFragment);
+			setTimesSeekBarProgress(mStyleFirstFragment.getSize());
 			break;
 		case MODE_2:
 			ft.hide(mStyleFirstFragment);
@@ -138,6 +137,20 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
 			mStyleFirstFragment.onColorChange(color);
 		}
+	}
+	
+	public void setTimesSeekBarProgress(int progress){
+		if(mStyleBottomFragment != null){
+			mStyleBottomFragment.setTimesSeekBarProgress(progress);
+		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if(mStyleBottomFragment != null && mStyleBottomFragment.onBackPressed()){
+			return;
+		}
+		super.onBackPressed();
 	}
 	
 	@Override

@@ -9,13 +9,13 @@ import android.view.View;
 
 import com.example.com.demo.R;
 import com.example.com.demo.bean.Frame;
+import com.example.com.demo.utils.Constants;
 import com.example.com.demo.widget.mode.ModeFrame;
 import com.example.com.demo.widget.mode.ModeFrame.OnLayoutChangeListener;
 
 public class StyleFirstFragment extends StyleContentFrament implements OnLayoutChangeListener {
 	
 	public Drawable mDefaultDrawable;
-	private static final int INIT_NUM = 6;
 	
 	private List<Frame> mFrames;
 	private ModeFrame mModeFrame;
@@ -37,20 +37,22 @@ public class StyleFirstFragment extends StyleContentFrament implements OnLayoutC
 		super.initData();
 		mFrames = new ArrayList<Frame>();
 		mModeFrame.setFrames(mFrames);
+		mModeFrame.setDefaultDrawable(mDefaultDrawable);
 		mModeFrame.setOnLayoutChangeListener(this);
 	}
 	
 	@Override
 	public void onLayoutChange() {
-		float degrees = 360.0f / INIT_NUM;
-		for (int i = 0; i < INIT_NUM; i++) {
+		float degrees = 360.0f / Constants.INIT_NUM;
+		for (int i = 0; i < Constants.INIT_NUM; i++) {
 			Frame frame = new Frame();
-			frame.mAlpha = 255;
-			frame.mColor = new Random().nextInt(0xFFFFFF);
-			frame.mCurrentDegrees = 0;
-			frame.mLastDegrees = degrees * i;
-			frame.mDrawable = mDefaultDrawable;
+			frame.mAlpha 			= 255;
+			frame.mChangeColor 		= false;
+			frame.mCurrentDegrees 	= 0;
+			frame.mLastDegrees 		= degrees * i;
+			frame.mDrawable 		= mDefaultDrawable;
 			frame.mRectC.set(mModeFrame.getRectF());
+			frame.mRectL.set(mModeFrame.getRectF());
 			mFrames.add(frame);
 		}
 		mModeFrame.startAnimation();
@@ -81,6 +83,10 @@ public class StyleFirstFragment extends StyleContentFrament implements OnLayoutC
 		if(mModeFrame != null){
 			mModeFrame.onTimesChange(times);
 		}
+	}
+	
+	public int getSize() {
+		return mFrames != null ? mFrames.size() : 0;
 	}
 
 }

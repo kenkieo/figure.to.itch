@@ -10,6 +10,7 @@ import com.example.com.demo.utils.Point;
 public class Frame {
 
 	public RectF	mRectC = new RectF();
+	public RectF	mRectL = new RectF();
 	public Rect		mRect  = new Rect();
 	public RectF	mRealRect = new RectF();
 	
@@ -27,6 +28,7 @@ public class Frame {
 	public float    mCurrentDegrees;//当前角度(对应中心点)
 	public float    mLastDegrees;//最终角度
 	public int      mColor;//颜色
+	public boolean  mChangeColor;
 	public int      mAlpha = 255;//透明度
 	
 	public Point 	mPointC = new Point();//当前位移
@@ -34,5 +36,28 @@ public class Frame {
 	
 	public float    mScaleC = 1;
 	public float    mScaleP;
+	
+	public static final void clone(Frame srcFrame, Frame dstFrame){
+		dstFrame.mRectC.set(srcFrame.mRectC);
+		dstFrame.mRectL.set(srcFrame.mRectL);
+		
+		dstFrame.mDrawableDegreesC 	= srcFrame.mDrawableDegreesC;
+		dstFrame.mDrawableDegreesL 	= srcFrame.mDrawableDegreesL;
+		dstFrame.mDrawableDegreesP 	= srcFrame.mDrawableDegreesP;
+		dstFrame.mDrawable 			= srcFrame.mDrawable;
+		
+		dstFrame.mMirror 			= srcFrame.mMirror;
+//		dstFrame.mCurrentDegrees 	= srcFrame.mCurrentDegrees;
+//		dstFrame.mLastDegrees 		= srcFrame.mLastDegrees;
+		dstFrame.mColor 			= srcFrame.mColor;
+		dstFrame.mChangeColor		= srcFrame.mChangeColor;
+		dstFrame.mAlpha 			= srcFrame.mAlpha;
+		
+		dstFrame.mPointC.set(srcFrame.mPointC);
+		dstFrame.mPointP.set(srcFrame.mPointP);
+
+		dstFrame.mScaleC 			= srcFrame.mScaleC;
+		dstFrame.mScaleP 			= srcFrame.mScaleP;
+	}
 	
 }

@@ -10,4 +10,8 @@ public class Constants {
 		0xFFB9D998, 0xFFFFD661, 0xFFEFC028, 0xFFF26D26,
 		0xFFEF4926, 0xFF000000, 0xFFDED7BB
 	};
+	
+	public static final int INIT_NUM 	= 6;
+	public static final int MIN_NUM 	= 2;
+	
 }

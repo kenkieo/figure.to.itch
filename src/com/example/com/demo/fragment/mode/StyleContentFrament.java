@@ -11,4 +11,5 @@ public abstract class StyleContentFrament extends BaseHandlerFragment implements
 	protected void releaseHandlerFragment() {
 		
 	}
+	
 }
