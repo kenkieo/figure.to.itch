@@ -8,19 +8,21 @@ import com.example.com.demo.R;
 import com.example.com.demo.fragment.BaseHandlerFragment;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.Mode;
 import com.example.com.demo.fragment.style.menu.StyleModeFragment.OnChoiceModeAction;
+import com.example.com.demo.interfaces.OnCustomColorAction;
 import com.example.com.demo.interfaces.OnHideParameterAction;
 import com.example.com.demo.interfaces.OnParameterChangeListener;
 import com.example.com.demo.interfaces.OnResourceSelectAction;
 import com.example.com.demo.widget.StyleMenuLayout;
 import com.example.com.demo.widget.StyleMenuLayout.OnStyleMenuClickAction;
 
-public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleMenuClickAction, OnChoiceModeAction, OnResourceSelectAction, OnParameterChangeListener, OnHideParameterAction{
+public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleMenuClickAction, OnChoiceModeAction, OnResourceSelectAction, OnParameterChangeListener, OnHideParameterAction, OnCustomColorAction{
 
 	private StyleMenuLayout mStyleMenuLayout;
 	
 	private StyleModeFragment 			mStyleModeFragment;
 	private StyleResourceFragment 		mStyleResourceFragment;
 	private StyleParameterFragment		mStyleParameterFragment;
+	private StyleParameterColorFragment mParameterColorFragment;
 	
 	private OnChoiceModeAction			mChoiceModeAction;
 	private OnResourceSelectAction		mOnResourceSelectAction;
@@ -64,8 +66,15 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		mStyleParameterFragment = new StyleParameterFragment();
 		mStyleParameterFragment.setOnParameterChangeListener(this);
 		mStyleParameterFragment.setOnHideParameterAction(this);
+		mStyleParameterFragment.setOnCustomColorAction(this);
 		ft.add(R.id.fragment_style_bottom_layout, mStyleParameterFragment);
 		ft.hide(mStyleParameterFragment);
+		
+		mParameterColorFragment = new StyleParameterColorFragment();
+		mParameterColorFragment.setOnParameterChangeListener(this);
+		mParameterColorFragment.setOnCustomColorAction(this);
+		ft.add(R.id.fragment_style_bottom_layout, mParameterColorFragment);
+		ft.hide(mParameterColorFragment);
 		ft.commit();	
 	}
 	
@@ -86,7 +95,7 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		}
 	}
 	
-	private void showStyleResourceFragment(boolean shown){
+	public void showStyleResourceFragment(boolean shown){
 		FragmentTransaction ft = getChildFragmentManager().beginTransaction();
 		if(shown && mStyleResourceFragment.isHidden()){
 			ft.setCustomAnimations(R.anim.translate_from_bottom_in, 0);
@@ -106,6 +115,19 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		}else if(!mStyleParameterFragment.isHidden() && !shown){
 			ft.setCustomAnimations(0, R.anim.translate_from_bottom_out);
 			ft.hide(mStyleParameterFragment);
+		}
+		ft.commit();
+	}
+	
+	@Override
+	public void showParameterColorFragment(boolean shown){
+		FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+		if(shown && mParameterColorFragment.isHidden()){
+			ft.setCustomAnimations(R.anim.translate_from_bottom_in, 0);
+			ft.show(mParameterColorFragment);
+		}else if(!mParameterColorFragment.isHidden() && !shown){
+			ft.setCustomAnimations(0, R.anim.translate_from_bottom_out);
+			ft.hide(mParameterColorFragment);
 		}
 		ft.commit();
 	}
@@ -170,7 +192,10 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 	
 	@Override
 	public boolean onBackPressed() {
-		if(mStyleParameterFragment != null && !mStyleParameterFragment.isHidden()){
+		if(mParameterColorFragment != null && !mParameterColorFragment.isHidden()){
+			showParameterColorFragment(false);
+			return true;
+		}else if(mStyleParameterFragment != null && !mStyleParameterFragment.isHidden()){
 			showStyleParameterFragment(false);
 			return true;
 		}else if(mStyleResourceFragment != null && !mStyleResourceFragment.isHidden()){
@@ -185,6 +210,7 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		mChoiceModeAction = null;
 		mOnResourceSelectAction = null;
 		mOnParameterChangeListener = null;
+		
 		if(mStyleMenuLayout != null){
 			mStyleMenuLayout.removeAllViews();
 		}
@@ -202,7 +228,14 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		if(mStyleParameterFragment != null){
 			mStyleParameterFragment.setOnParameterChangeListener(null);
 			mStyleParameterFragment.setOnHideParameterAction(null);
+			mStyleParameterFragment.setOnCustomColorAction(null);
 			mStyleParameterFragment = null;
+		}
+		
+		if(mParameterColorFragment != null){
+			mParameterColorFragment.setOnParameterChangeListener(null);
+			mParameterColorFragment.setOnCustomColorAction(null);
+			mParameterColorFragment = null;
 		}
 	}
 

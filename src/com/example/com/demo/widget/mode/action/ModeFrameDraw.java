@@ -23,10 +23,11 @@ public class ModeFrameDraw {
 	private int  	mPadding;
 	private Paint 	mPaint;
 	private Point   mCenterPoint = new Point();
+	private Drawable mAddDrawable;
 	
 	public ModeFrameDraw(Context context) {
 		mPadding = DisplayUtils.dip2px(context, 15f);
-		
+		mAddDrawable = context.getResources().getDrawable(R.drawable.icon_source_delete);
 		mPaint = new Paint();
 		mPaint.setColor(context.getResources().getColor(R.color.common_purple));
 		mPaint.setStrokeWidth(1);
@@ -64,12 +65,19 @@ public class ModeFrameDraw {
 				canvas.concat(matrix);
 				
 				frame.mRectC.round(frame.mRect);
-				frame.mDrawable.setBounds(frame.mRect);
-				if(frame.mChangeColor){
-					frame.mDrawable.setColorFilter(frame.mColor | 0xFF000000, Mode.SRC_IN);
+				if(frame.mDrawable != null){
+					frame.mDrawable.setBounds(frame.mRect);
+					if(frame.mColor != 0){
+						frame.mDrawable.setColorFilter(frame.mColor, Mode.SRC_IN);
+					}else{
+						frame.mDrawable.clearColorFilter();
+					}
+					frame.mDrawable.setAlpha(frame.mAlpha);
+					frame.mDrawable.draw(canvas);
+				}else{
+					mAddDrawable.setBounds(frame.mRect);
+					mAddDrawable.draw(canvas);
 				}
-				frame.mDrawable.setAlpha(frame.mAlpha);
-				frame.mDrawable.draw(canvas);
 				frame.mMatrix.set(canvas.getMatrix());
 				canvas.restore();
 			}
@@ -77,7 +85,7 @@ public class ModeFrameDraw {
 	}
 	
 	public final void drawMenu(Canvas canvas, Frame selectFrame, Drawable[] menuDrawables){
-		if(selectFrame != null){
+		if(selectFrame != null && selectFrame.mDrawable != null){
 			canvas.save();
 			
 			Matrix matrix = canvas.getMatrix();
@@ -85,48 +93,45 @@ public class ModeFrameDraw {
 			matrix.preTranslate(selectFrame.mPointC.x, selectFrame.mPointC.y);
 			matrix.preRotate(selectFrame.mDrawableDegreesC, selectFrame.mRectC.centerX(), selectFrame.mRectC.centerY());
 			matrix.preScale(selectFrame.mScaleC, selectFrame.mScaleC, selectFrame.mRectC.centerX(), selectFrame.mRectC.centerY());
-			canvas.concat(matrix);
 			
-			drawMenu(canvas, selectFrame.mRectC, menuDrawables);
+			canvas.concat(matrix);
+
+			drawMenuDrawable(canvas, selectFrame, menuDrawables);
 			selectFrame.mMenuMatrix.set(canvas.getMatrix());
 			canvas.restore();
 		}
 	}
 	
-	private void drawMenu(Canvas canvas, RectF rectF, Drawable[] menuDrawables){
+	private void drawMenuDrawable(Canvas canvas, Frame selectFrame, Drawable[] menuDrawables){
+		RectF rectF = selectFrame.mRectC;
 		float left 		= rectF.left   - mPadding;
 		float top 		= rectF.top    - mPadding;
 		float right 	= rectF.right  + mPadding;
 		float bottom 	= rectF.bottom + mPadding;
 		canvas.drawRect(left, top, right, bottom, mPaint);
 		
-		int dLeft 	= (int) (left - menuDrawables[0].getIntrinsicWidth()  / 2);
-		int dTop 	= (int) (top  - menuDrawables[0].getIntrinsicHeight() / 2);
-		int dRight 	= dLeft + menuDrawables[0].getIntrinsicWidth();
-		int dBottom	= dTop  + menuDrawables[0].getIntrinsicHeight();
-		menuDrawables[0].setBounds(dLeft, dTop, dRight, dBottom);
-		menuDrawables[0].draw(canvas);
+		drawItemDrawable(canvas, left, 	top, 	selectFrame.mScaleC, menuDrawables[0]);
+		drawItemDrawable(canvas, right, top,  	selectFrame.mScaleC, menuDrawables[1]);
+		drawItemDrawable(canvas, left,  bottom, selectFrame.mScaleC, menuDrawables[2]);
+		drawItemDrawable(canvas, right, bottom, selectFrame.mScaleC, menuDrawables[3]);
+	}
+
+	private final void drawItemDrawable(Canvas canvas, float left, float top, float scale, Drawable drawable){
+		int drawableWidth  = drawable.getIntrinsicWidth();
+		int drawableHeight = drawable.getIntrinsicHeight();
 		
-		dLeft 	= (int) (right - menuDrawables[1].getIntrinsicWidth() / 2);
-		dTop 	= (int) (top - menuDrawables[1].getIntrinsicHeight()  / 2);
-		dRight 	= dLeft + menuDrawables[1].getIntrinsicWidth();
-		dBottom	= dTop  + menuDrawables[1].getIntrinsicHeight();
-		menuDrawables[1].setBounds(dLeft, dTop, dRight, dBottom);
-		menuDrawables[1].draw(canvas);
-		
-		dLeft 	= (int) (left 	- menuDrawables[2].getIntrinsicWidth()  / 2);
-		dTop 	= (int) (bottom - menuDrawables[2].getIntrinsicHeight() / 2);
-		dRight 	= dLeft + menuDrawables[2].getIntrinsicWidth();
-		dBottom	= dTop  + menuDrawables[2].getIntrinsicHeight();
-		menuDrawables[2].setBounds(dLeft, dTop, dRight, dBottom);
-		menuDrawables[2].draw(canvas);
-		
-		dLeft 	= (int) (right  - menuDrawables[3].getIntrinsicWidth()  / 2);
-		dTop 	= (int) (bottom - menuDrawables[3].getIntrinsicHeight() / 2);
-		dRight 	= dLeft + menuDrawables[3].getIntrinsicWidth();
-		dBottom	= dTop  + menuDrawables[3].getIntrinsicHeight();
-		menuDrawables[3].setBounds(dLeft, dTop, dRight, dBottom);
-		menuDrawables[3].draw(canvas);
+		try {
+			drawableWidth  = (int) (drawableWidth  / scale);
+			drawableHeight = (int) (drawableHeight / scale);
+		} catch (Exception e) {
+		}
+
+		int dLeft 	= (int) (left - drawableWidth  / 2);
+		int dTop 	= (int) (top  - drawableHeight / 2);
+		int dRight 	= dLeft + drawableWidth;
+		int dBottom	= dTop  + drawableHeight;
+		drawable.setBounds(dLeft, dTop, dRight, dBottom);
+		drawable.draw(canvas);
 	}
 	
 }

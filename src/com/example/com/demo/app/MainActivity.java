@@ -17,8 +17,9 @@ import com.example.com.demo.observers.OnNetBitmapSelectObserver;
 import com.example.com.demo.observers.OnNetBitmapSelectObserver.OnNetBitmapSelectAction;
 import com.example.com.demo.utils.LayoutInflaterUtils;
 import com.example.com.demo.widget.actionbar.menu.ActionbarMenuImageView;
+import com.example.com.demo.widget.mode.ModeFrame.OnModeFrameAction;
 
-public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction, OnResourceSelectAction, OnNetBitmapSelectAction, OnParameterChangeListener{
+public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceModeAction, OnResourceSelectAction, OnNetBitmapSelectAction, OnParameterChangeListener, OnModeFrameAction{
 
 	private StyleBottomFragment mStyleBottomFragment;
 	
@@ -27,6 +28,7 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	private StyleThreeFragment	mStyleThreeFragment;
 	
 	private ActionbarMenuImageView mLockIcon;
+	private ActionbarMenuImageView mCutIcon;
 
 	@Override
 	protected int getLayoutRes() {
@@ -41,15 +43,29 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	public void addActionbarMenus() {
 		super.addActionbarMenus();
 		mLockIcon = (ActionbarMenuImageView) LayoutInflaterUtils.inflateView(mContext, R.layout.layout_actionbar_menu_icon);
-		mLockIcon.setId(R.id.action_menu_lock);
-		mLockIcon.setImageResource(R.drawable.icon_homepage_properties_group_01);
+		mLockIcon.setMenuItemId(R.id.action_menu_lock);
+		mLockIcon.setImageResource(R.drawable.icon_homepage_properties_group_selector);
 		addMenuItem(mLockIcon);
+		
+		mCutIcon = (ActionbarMenuImageView) LayoutInflaterUtils.inflateView(mContext, R.layout.layout_actionbar_menu_icon);
+		mCutIcon.setMenuItemId(R.id.action_menu_cut);
+		mCutIcon.setImageResource(R.drawable.icon_homepage_properties_cut_selector);
+		addMenuItem(mCutIcon);
 	}
 	
 	@Override
 	public void onMenuAction(int menuId) {
 		super.onMenuAction(menuId);
-		mLockIcon.setSelected(!mLockIcon.isSelected());
+		if(R.id.action_menu_lock == menuId){
+			mLockIcon.setSelected(!mLockIcon.isSelected());
+			if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
+				mStyleFirstFragment.setIsLock(mLockIcon.isSelected());
+			}
+		}else if(R.id.action_menu_cut == menuId){
+			if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
+				mStyleFirstFragment.cutScreenShot();
+			}
+		}
 	}
 
 	@Override
@@ -63,13 +79,16 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 		ft.add(R.id.layout_framelayout, mStyleBottomFragment);
 		
 		mStyleFirstFragment 	= new StyleFirstFragment();
+		mStyleFirstFragment.setOnModeFrameAction(this);
 		ft.add(R.id.StyleFrameLayout, mStyleFirstFragment);
 		
 		mStyleSecondFragment 	= new StyleSecondFragment();
+		mStyleSecondFragment.setOnModeFrameAction(this);
 		ft.add(R.id.StyleFrameLayout, mStyleSecondFragment);
 		ft.hide(mStyleSecondFragment);
 		
 		mStyleThreeFragment 	= new StyleThreeFragment();
+		mStyleThreeFragment.setOnModeFrameAction(this);
 		ft.add(R.id.StyleFrameLayout, mStyleThreeFragment);
 		ft.hide(mStyleThreeFragment);
 		ft.commit();
@@ -146,6 +165,18 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	}
 	
 	@Override
+	public void showStyleResourceFragment() {
+		if(mStyleBottomFragment != null){
+			mStyleBottomFragment.showStyleResourceFragment(true);
+		}
+	}
+	
+	@Override
+	public void onLayoutChange() {
+		
+	}
+	
+	@Override
 	public void onBackPressed() {
 		if(mStyleBottomFragment != null && mStyleBottomFragment.onBackPressed()){
 			return;
@@ -156,6 +187,39 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	@Override
 	protected void release_BaseTitleFragmentActivity() {
 		OnNetBitmapSelectObserver.getInst().removeOnNetBitmapSelectAction(this);
+
+		if(mStyleBottomFragment != null){
+			mStyleBottomFragment.setOnChoiceModeAction(null);
+			mStyleBottomFragment.setOnResourceSelectAction(null);
+			mStyleBottomFragment.setOnParameterChangeListener(null);
+			mStyleBottomFragment = null;
+		}
+		
+		if(mStyleFirstFragment != null){
+			mStyleFirstFragment.setOnModeFrameAction(null);
+			mStyleFirstFragment = null;
+		}
+		
+		if(mStyleSecondFragment != null){
+			mStyleSecondFragment.setOnModeFrameAction(null);
+			mStyleSecondFragment = null;
+		}
+		
+		if(mStyleThreeFragment != null){
+			mStyleThreeFragment.setOnModeFrameAction(null);
+			mStyleThreeFragment = null;
+		}
+
+		if(mLockIcon != null){
+			mLockIcon.setOnClickListener(null);
+			mLockIcon = null;
+		}
+		
+		if(mCutIcon != null){
+			mCutIcon.setOnClickListener(null);
+			mCutIcon = null;
+		}
+		
 	}
 
 }

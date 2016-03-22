@@ -1,5 +1,6 @@
 package com.example.com.demo.utils;
 
+
 public class Constants {
 	
 	public static final int StyleColors[] = new int[]{

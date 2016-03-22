@@ -1,5 +1,6 @@
 package com.example.com.demo.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -107,6 +108,7 @@ public class CustomSeekBar extends View{
 		mRect.bottom = mRect.top + mThumbRadius * 2;
 	}
 	
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getAction();

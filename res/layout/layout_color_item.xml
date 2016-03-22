@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_color_item"
+    android:layout_width="@dimen/layout_resource_size"
+    android:layout_height="@dimen/layout_resource_size" >
+
+    <com.example.com.demo.view.ParameterColorIcon
+        android:id="@+id/layout_color_item_icon"
+        android:layout_width="@dimen/layout_color_size"
+        android:layout_height="@dimen/layout_color_size"
+        android:background="@drawable/common_color_selector" />
+
+</LinearLayout>

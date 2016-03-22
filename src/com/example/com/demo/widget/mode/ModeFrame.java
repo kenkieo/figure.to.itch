@@ -2,15 +2,16 @@ package com.example.com.demo.widget.mode;
 
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -38,7 +39,7 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 	private boolean mIsInitRect;
 	private Handler mHandler;
 	
-	private OnLayoutChangeListener mChangeListener;
+	private OnModeFrameAction mAction;
 	private boolean 	mIsLock;
 	private Point   	mCenterPoint = new Point();
 	private Frame 		mSelectFrame;
@@ -60,6 +61,7 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
+		canvas.drawColor(Color.WHITE);
 		ModeFrameDraw.getInst(getContext()).drawFrames(canvas, mFrames);
 		ModeFrameDraw.getInst(getContext()).drawMenu(canvas, mSelectFrame, mMenuDrawables);
 	}
@@ -68,40 +70,15 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 		this.mFrames = frames;
 	}
 	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		if(!mIsInitRect){
-			mIsInitRect = true;
-			mCenterPoint.x	= getMeasuredWidth() / 2;
-			mCenterPoint.y	= getMeasuredHeight() / 2;
-			ModeFrameDraw.getInst(getContext()).setCenterPoint(mCenterPoint);
-			
-			mInitRectF.left 	= (getMeasuredWidth() - INIT_FRAME) / 2;
-			mInitRectF.top  	= (getMeasuredHeight() / 2 - INIT_FRAME) / 2;
-			mInitRectF.right	= mInitRectF.left + INIT_FRAME;
-			mInitRectF.bottom	= mInitRectF.top  + INIT_FRAME;
-			
-			mLockFrame.mRectL.set(mInitRectF);
-			
-			mLockFrame.mRectC.left		= (getMeasuredWidth()  - INIT_FRAME) / 2;
-			mLockFrame.mRectC.top  		= (getMeasuredHeight() - INIT_FRAME) / 2;
-			mLockFrame.mRectC.right		= mLockFrame.mRectC.left + INIT_FRAME;
-			mLockFrame.mRectC.bottom	= mLockFrame.mRectC.top  + INIT_FRAME;
-		}
-	}
-	
 	public void startAnimation(){
 		HandlerUtils.sendEmptyMessageDelayed(mHandler, MSG_ANIMATION, DELAY_TIME);
 	}
 	
 	private void startAnimationForAdd(){
-		Log.i("TAG", "startAnimationForAdd:");
 		HandlerUtils.sendEmptyMessageDelayed(mHandler, MSG_ADD, DELAY_TIME);
 	}
 	
 	protected void handleMessage(Message msg) {
-		Log.i("TAG", "handleMessage:" + msg.what);
 		switch (msg.what) {
 		case MSG_ANIMATION:{
 			boolean stop = true;
@@ -138,6 +115,7 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 	private Point mMovePoint = new Point();
 	private long  mDownTime;
 	
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getAction();
@@ -149,7 +127,6 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 			mDownPoint.y = y;
 			mDownTime = System.currentTimeMillis();
 			
-
 			mLockFrame.mDrawableDegreesP = mLockFrame.mDrawableDegreesC;
 			mLockFrame.mPointP.set(mLockFrame.mPointC);
 			mLockFrame.mScaleP = mLockFrame.mScaleC;
@@ -168,7 +145,7 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 					mMenuMode = MenuMode.MIRROR;
 				}else if(checkMenuContains(mMenuDrawables[3])){
 					mMenuMode = MenuMode.SCALE;
-				}else if(mSelectFrame.mRealRect.contains(mDownPoint.x, mDownPoint.y)){
+				}else if(mSelectFrame.mDrawable != null && mSelectFrame.mRealRect.contains(mDownPoint.x, mDownPoint.y)){
 					mMenuMode = MenuMode.MOVE;
 				}else{
 					mMenuMode = MenuMode.IDE;
@@ -263,6 +240,13 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 			if(time - mDownTime < MAX_SING_DOWN_TIME){
 				switch (mMenuMode) {
 				case DEL:
+					if(mIsLock){
+						for (Frame frame : mFrames) {
+							frame.mDrawable = null;
+						}
+					}else{
+						mSelectFrame.mDrawable = null;
+					}
 					break;
 				case MIRROR:
 					if(mIsLock){
@@ -279,6 +263,11 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 					for (Frame frame : mFrames) {
 						if(frame.mRealRect.contains(mDownPoint.x, mDownPoint.y)){
 							mSelectFrame = frame;
+							if(frame.mDrawable == null){
+								if(mAction != null){
+									mAction.showStyleResourceFragment();
+								}
+							}
 							break;
 						}
 					}
@@ -308,6 +297,11 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 	
 	public void setIsLock(boolean isLock) {
 		this.mIsLock = isLock;
+		for (Frame frame : mFrames) {
+			Frame.clone(mLockFrame, frame);
+			frame.mRectC.set(frame.mRectL);
+		}
+		invalidate();
 	}
 	
 	public RectF getRectF() {
@@ -316,14 +310,31 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 	
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-		if(mChangeListener != null){
-			mChangeListener.onLayoutChange();
-			mChangeListener = null;
+		if(!mIsInitRect){
+			mIsInitRect = true;
+			mCenterPoint.x	= getMeasuredWidth() / 2;
+			mCenterPoint.y	= getMeasuredHeight() / 2;
+			ModeFrameDraw.getInst(getContext()).setCenterPoint(mCenterPoint);
+			
+			mInitRectF.left 	= (getMeasuredWidth() - INIT_FRAME) / 2;
+			mInitRectF.top  	= (getMeasuredHeight() / 2 - INIT_FRAME) / 2;
+			mInitRectF.right	= mInitRectF.left + INIT_FRAME;
+			mInitRectF.bottom	= mInitRectF.top  + INIT_FRAME;
+			
+			mLockFrame.mRectL.set(mInitRectF);
+			
+			mLockFrame.mRectC.left		= (getMeasuredWidth()  - INIT_FRAME) / 2;
+			mLockFrame.mRectC.top  		= (getMeasuredHeight() - INIT_FRAME) / 2;
+			mLockFrame.mRectC.right		= mLockFrame.mRectC.left + INIT_FRAME;
+			mLockFrame.mRectC.bottom	= mLockFrame.mRectC.top  + INIT_FRAME;
+			if(mAction != null){
+				mAction.onLayoutChange();
+			}
 		}
 	}
 	
-	public void setOnLayoutChangeListener(OnLayoutChangeListener l) {
-		this.mChangeListener = l;
+	public void setOnModeFrameAction(OnModeFrameAction action) {
+		this.mAction = action;
 	}
 	
 	public void setonResourceSelect(Drawable drawable){
@@ -332,10 +343,10 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 				mSelectFrame.mDrawable = drawable;
 			}
 		}else {
+			mLockFrame.mDrawable = drawable;
 			for (Frame frame : mFrames) {
 				frame.mDrawable = drawable;
 			}
-			mLockFrame.mDrawable = drawable;
 		}
 		invalidate();
 	}
@@ -348,10 +359,10 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 				mSelectFrame.mAlpha = alpha;
 			}
 		}else {
+			mLockFrame.mAlpha = alpha;
 			for (Frame frame : mFrames) {
 				frame.mAlpha = alpha;
 			}
-			mLockFrame.mAlpha = alpha;
 		}
 		invalidate();
 	}
@@ -362,14 +373,11 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 			if(mSelectFrame != null){
 				mSelectFrame.mColor = color;
 			}
-			mSelectFrame.mChangeColor = true;
 		}else {
+			mLockFrame.mColor = color;
 			for (Frame frame : mFrames) {
 				frame.mColor = color;
-				frame.mChangeColor = true;
 			}
-			mLockFrame.mColor = color;
-			mLockFrame.mChangeColor = true;
 		}
 		invalidate();
 	}
@@ -407,8 +415,15 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 		mLockFrame.mDrawable = defaultDrawable;
 	}
 	
-	public interface OnLayoutChangeListener{
+	public void hideSelectFrame(){
+		mSelectFrame = null;
+		invalidate();
+	}
+	
+	public interface OnModeFrameAction{
 		void onLayoutChange();
+		
+		void showStyleResourceFragment();
 	}
 	
 }

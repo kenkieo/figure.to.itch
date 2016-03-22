@@ -27,8 +27,7 @@ public class Frame {
 	public boolean  mMirror;//是否反转
 	public float    mCurrentDegrees;//当前角度(对应中心点)
 	public float    mLastDegrees;//最终角度
-	public int      mColor;//颜色
-	public boolean  mChangeColor;
+	public int      mColor = 0x00000000;//颜色
 	public int      mAlpha = 255;//透明度
 	
 	public Point 	mPointC = new Point();//当前位移
@@ -47,10 +46,7 @@ public class Frame {
 		dstFrame.mDrawable 			= srcFrame.mDrawable;
 		
 		dstFrame.mMirror 			= srcFrame.mMirror;
-//		dstFrame.mCurrentDegrees 	= srcFrame.mCurrentDegrees;
-//		dstFrame.mLastDegrees 		= srcFrame.mLastDegrees;
 		dstFrame.mColor 			= srcFrame.mColor;
-		dstFrame.mChangeColor		= srcFrame.mChangeColor;
 		dstFrame.mAlpha 			= srcFrame.mAlpha;
 		
 		dstFrame.mPointC.set(srcFrame.mPointC);

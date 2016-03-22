@@ -9,4 +9,8 @@
 	<string name="text_menu_parameter">参数</string>
 	<string name="text_parameter_times">旋转次数</string>
 	<string name="text_parameter_alpha">透明度</string>
+	
+	<string name="text_parameter_color_red">红包</string>
+	<string name="text_parameter_color_green">绿色</string>
+	<string name="text_parameter_color_blue">蓝色</string>
 </resources>

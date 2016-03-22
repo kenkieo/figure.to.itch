@@ -96,7 +96,22 @@ public class StyleModeFragment extends BaseHandlerFragment implements OnClickLis
 	
 	@Override
 	protected void releaseHandlerFragment() {
+		mAction = null;
+		if(mMode_1 != null){
+			mMode_1.setOnClickListener(null);
+			mMode_1 = null;
+		}
 		
+		if(mMode_2 != null){
+			mMode_2.setOnClickListener(null);
+			mMode_2 = null;
+		}
+		
+		if(mMode_3 != null){
+			mMode_3.setOnClickListener(null);
+			mMode_3 = null;
+		}
+		mTmpView = null;
 	}
 	
 }

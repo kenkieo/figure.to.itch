@@ -1,6 +1,6 @@
 package com.example.com.demo.fragment.style.menu;
 
-import android.util.Log;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -79,10 +79,11 @@ public class StyleResourceFragment extends BaseHandlerFragment implements OnClic
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			Log.i("TAG", "resId:" + resId);
 			if(resId > 0){
 				if(mAction != null){
-					mAction.onResourceSelect(getResources().getDrawable(resId));
+					Drawable drawable = getResources().getDrawable(resId);
+					drawable.clearColorFilter();
+					mAction.onResourceSelect(drawable);
 				}
 			}
 		}
@@ -94,6 +95,7 @@ public class StyleResourceFragment extends BaseHandlerFragment implements OnClic
 	
 	@Override
 	protected void releaseHandlerFragment() {
+		mAction = null;
 		if(mContentLayout != null){
 			mContentLayout.removeAllViews();
 			mContentLayout = null;

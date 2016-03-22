@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_style_resource_add"
+    android:layout_width="@dimen/layout_color_size"
+    android:layout_height="@dimen/layout_color_size"
+    android:background="@drawable/common_white_gap"
+    android:gravity="center"
+    android:minHeight="@dimen/layout_color_size"
+    android:minWidth="@dimen/layout_color_size"
+    android:text="@string/text_add"
+    android:textColor="@color/common_white"
+    android:textSize="14.0sp" />

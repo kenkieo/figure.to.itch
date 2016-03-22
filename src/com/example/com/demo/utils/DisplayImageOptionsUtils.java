@@ -17,24 +17,22 @@ public class DisplayImageOptionsUtils {
 
 	public static DisplayImageOptions getInstance(int resId) {
 		return new DisplayImageOptions.Builder()
-				.showStubImage(resId)
 				.showImageForEmptyUri(resId)
 				.showImageOnFail(resId)
 				.imageScaleType(ImageScaleType.EXACTLY)
 				.cacheInMemory(true) // 加载图片时会在内存中加载缓存
-				.cacheOnDisc(true) // 加载图片时会在磁盘中加载缓存
+				.cacheOnDisk(true) // 加载图片时会在磁盘中加载缓存
 				.bitmapConfig(Config.RGB_565)
 				.build();
 	}
 	
 	public static DisplayImageOptions getInstance(int resId, boolean cacheOnDisc) {
 		return new DisplayImageOptions.Builder()
-				.showStubImage(resId)
 				.showImageForEmptyUri(resId)
 				.showImageOnFail(resId)
 				.imageScaleType(ImageScaleType.EXACTLY)
 				.cacheInMemory(true) // 加载图片时会在内存中加载缓存
-				.cacheOnDisc(cacheOnDisc) // 加载图片时会在磁盘中加载缓存
+				.cacheOnDisk(cacheOnDisc) // 加载图片时会在磁盘中加载缓存
 				.bitmapConfig(Config.RGB_565)
 				.build();
 	}
@@ -42,12 +40,11 @@ public class DisplayImageOptionsUtils {
 	public static DisplayImageOptions getDefault(){
 		int resId = R.drawable.common_gray;
 		return new DisplayImageOptions.Builder()
-				.showStubImage(resId)
 				.showImageForEmptyUri(resId)
 				.showImageOnFail(resId)
 				.imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
 				.cacheInMemory(true) // 加载图片时会在内存中加载缓存
-				.cacheOnDisc(true) // 加载图片时会在磁盘中加载缓存
+				.cacheOnDisk(true) // 加载图片时会在磁盘中加载缓存
 				.bitmapConfig(Config.RGB_565)
 				.build();
 	}

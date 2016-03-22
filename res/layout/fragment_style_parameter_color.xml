@@ -1,54 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/common_bottom_content"
+    android:orientation="vertical"
     android:paddingLeft="15.0dip"
     android:paddingRight="15.0dip" >
 
     <ImageView
-        android:id="@+id/fragment_style_parameter_collapse"
+        android:id="@+id/fragment_style_parameter_color_collapse"
         android:layout_width="30.0dip"
         android:layout_height="30.0dip"
-        android:layout_alignParentRight="true"
+        android:layout_gravity="right"
         android:background="@drawable/common_transparent_selector"
         android:scaleType="center"
         android:src="@drawable/icon_homepage_parameter_collapse" />
 
     <LinearLayout
-        android:id="@+id/fragment_style_parameter_times"
+        android:id="@+id/fragment_style_parameter_color_red"
         android:layout_width="match_parent"
-        android:layout_height="50.0dip"
-        android:layout_below="@+id/fragment_style_parameter_collapse" >
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0" >
 
         <TextView
             android:layout_width="80.0dip"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/text_parameter_times"
+            android:text="@string/text_parameter_color_red"
             android:textColor="@color/common_white" />
 
         <com.example.com.demo.view.CustomSeekBar
-            android:id="@+id/fragment_style_parameter_times_seek"
+            android:id="@+id/fragment_style_parameter_color_red_seek"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/fragment_style_parameter_alpha"
+        android:id="@+id/fragment_style_parameter_color_green"
         android:layout_width="match_parent"
-        android:layout_height="50.0dip"
-        android:layout_below="@+id/fragment_style_parameter_times" >
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0" >
 
         <TextView
             android:layout_width="80.0dip"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/text_parameter_alpha"
+            android:text="@string/text_parameter_color_green"
             android:textColor="@color/common_white" />
 
         <com.example.com.demo.view.CustomSeekBar
-            android:id="@+id/fragment_style_parameter_alpha_seek"
+            android:id="@+id/fragment_style_parameter_color_green_seek"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_style_parameter_color_blue"
+        android:layout_width="match_parent"
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0" >
+
+        <TextView
+            android:layout_width="80.0dip"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/text_parameter_color_blue"
+            android:textColor="@color/common_white" />
+
+        <com.example.com.demo.view.CustomSeekBar
+            android:id="@+id/fragment_style_parameter_color_blue_seek"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
@@ -56,12 +76,11 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_color_size"
-        android:layout_alignParentBottom="true"
         android:layout_marginBottom="10.0dip"
         android:scrollbars="none" >
 
         <LinearLayout
-            android:id="@+id/fragment_style_parameter_color_layout"
+            android:id="@+id/fragment_style_parameter_color_list_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:divider="@drawable/common_divider"
@@ -73,4 +92,4 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-</RelativeLayout>
+</LinearLayout>

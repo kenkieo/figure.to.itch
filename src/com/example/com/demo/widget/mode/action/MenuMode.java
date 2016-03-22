@@ -5,5 +5,5 @@ public enum MenuMode {
 	MOVE, DEL, // 删除
 	ROTATE, // 旋转
 	MIRROR, // 反转
-	SCALE// 按比例放大
+	SCALE// 按比例放大	
 }
