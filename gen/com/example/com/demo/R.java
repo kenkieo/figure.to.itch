@@ -340,12 +340,13 @@ containing a value of this type.
         public static final int layout_category_item_name=0x7f070026;
         public static final int layout_color_item=0x7f070027;
         public static final int layout_color_item_icon=0x7f070028;
-        public static final int layout_frame=0x7f070029;
-        public static final int layout_framelayout=0x7f07002a;
-        public static final int layout_gridview=0x7f07002b;
-        public static final int layout_listview=0x7f07002c;
-        public static final int layout_resource_item=0x7f07002d;
-        public static final int layout_resource_item_icon=0x7f07002e;
+        public static final int layout_frame=0x7f07002a;
+        public static final int layout_frame_mode_1=0x7f070029;
+        public static final int layout_framelayout=0x7f07002b;
+        public static final int layout_gridview=0x7f07002c;
+        public static final int layout_listview=0x7f07002d;
+        public static final int layout_resource_item=0x7f07002e;
+        public static final int layout_resource_item_icon=0x7f07002f;
     }
     public static final class layout {
         public static final int activity_first_layout=0x7f030000;
@@ -366,11 +367,12 @@ containing a value of this type.
         public static final int layout_category_item=0x7f03000f;
         public static final int layout_color_add=0x7f030010;
         public static final int layout_color_item=0x7f030011;
-        public static final int layout_frame=0x7f030012;
-        public static final int layout_framelayout=0x7f030013;
-        public static final int layout_gridview=0x7f030014;
-        public static final int layout_listview=0x7f030015;
-        public static final int layout_resource_item=0x7f030016;
+        public static final int layout_frame_mode_1=0x7f030012;
+        public static final int layout_frame_mode_2=0x7f030013;
+        public static final int layout_framelayout=0x7f030014;
+        public static final int layout_gridview=0x7f030015;
+        public static final int layout_listview=0x7f030016;
+        public static final int layout_resource_item=0x7f030017;
     }
     public static final class string {
         public static final int app_name=0x7f080000;

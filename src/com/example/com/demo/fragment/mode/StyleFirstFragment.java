@@ -24,13 +24,13 @@ public class StyleFirstFragment extends StyleContentFrament{
 	
 	@Override
 	protected int getLayoutRes() {
-		return R.layout.layout_frame;
+		return R.layout.layout_frame_mode_1;
 	}
 
 	@Override
 	protected void initViews(View convertView) {
 		mDefaultDrawable = getResources().getDrawable(R.drawable.icon_default_source_1);
-		mModeFrame = (ModeFrame) convertView.findViewById(R.id.layout_frame);
+		mModeFrame = (ModeFrame) convertView.findViewById(R.id.layout_frame_mode_1);
 	}
 	
 	@Override
@@ -44,8 +44,8 @@ public class StyleFirstFragment extends StyleContentFrament{
 	
 	@Override
 	public void onLayoutChange() {
-		float degrees = 360.0f / Constants.INIT_NUM;
-		for (int i = 0; i < Constants.INIT_NUM; i++) {
+		float degrees = 360.0f / Constants.INIT_NUM_MODE_1;
+		for (int i = 0; i < Constants.INIT_NUM_MODE_1; i++) {
 			Frame frame = new Frame();
 			frame.mAlpha 			= 255;
 			frame.mCurrentDegrees 	= 0;

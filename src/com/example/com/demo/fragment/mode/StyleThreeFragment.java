@@ -10,7 +10,7 @@ public class StyleThreeFragment extends StyleContentFrament{
 	
 	@Override
 	protected int getLayoutRes() {
-		return R.layout.layout_frame;
+		return R.layout.layout_frame_mode_1;
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class StyleParameterFragment extends BaseHandlerFragment implements OnSee
 		mAlphaSeekBar = (CustomSeekBar) convertView.findViewById(R.id.fragment_style_parameter_alpha_seek);
 		mColorLayout  = (ViewGroup) convertView.findViewById(R.id.fragment_style_parameter_color_layout);
 		
-		mTimesSeekBar.setProgress(Constants.INIT_NUM);
+		mTimesSeekBar.setProgress(Constants.MIN_NUM);
 		mTimesSeekBar.setMin(Constants.MIN_NUM);
 		mTimesSeekBar.setMax(12);
 		

@@ -2,11 +2,9 @@ package com.example.com.demo.widget.mode;
 
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -25,27 +23,22 @@ import com.example.com.demo.widget.mode.action.FrameUtils;
 import com.example.com.demo.widget.mode.action.MenuMode;
 import com.example.com.demo.widget.mode.action.ModeFrameDraw;
 
-public class ModeFrame extends View implements OnParameterChangeListener{
+public abstract class ModeFrame extends View implements OnParameterChangeListener{
 
 	private static final int INIT_FRAME		= 100;
 	private static final long DELAY_TIME	= 10;
-	
 	private static final int MSG_ANIMATION	= 1;
-	private static final int MSG_ADD		= 2;
 
-	private List<Frame> mFrames;
-	private RectF 	mInitRectF;
-	
-	private boolean mIsInitRect;
-	private Handler mHandler;
-	
-	private OnModeFrameAction mAction;
-	private boolean 	mIsLock;
-	private Point   	mCenterPoint = new Point();
-	private Frame 		mSelectFrame;
-	private Frame	 	mLockFrame;
-	private Drawable    mMenuDrawables[];
-	private MenuMode 	mMenuMode;
+	protected List<Frame> mFrames;
+	protected RectF 	mInitRectF;
+	protected boolean 	mIsInitRect;
+	protected Handler 	mHandler;
+	protected OnModeFrameAction mAction;
+	protected boolean 	mIsLock;
+	protected Point   	mCenterPoint = new Point();
+	protected Frame 	mSelectFrame;
+	protected Frame	 	mLockFrame;
+	private   Drawable  mMenuDrawables[];
 	
 	public ModeFrame(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -74,39 +67,20 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 		HandlerUtils.sendEmptyMessageDelayed(mHandler, MSG_ANIMATION, DELAY_TIME);
 	}
 	
-	private void startAnimationForAdd(){
-		HandlerUtils.sendEmptyMessageDelayed(mHandler, MSG_ADD, DELAY_TIME);
-	}
-	
 	protected void handleMessage(Message msg) {
 		switch (msg.what) {
 		case MSG_ANIMATION:{
-			boolean stop = true;
-			for (Frame frame : mFrames) {
-				stop &= !FrameUtils.changeDegrees(frame);
-			}
-			
-			invalidate();
-			if(!stop){
-				startAnimation();
-			}
-			break;
-		}
-		case MSG_ADD:{
-			boolean stop = true;
-			for (Frame frame : mFrames) {
-				boolean isLC = FrameUtils.changeLocation(frame); 
-				boolean isDC = FrameUtils.changeDegrees(frame);
-				stop &=  !isLC || !isDC;
-			}
-			if(stop){
+				boolean stop = true;
+				for (Frame frame : mFrames) {
+					stop &= !FrameUtils.changeDegrees(frame);
+				}
+				
 				invalidate();
-				startAnimationForAdd();
+				if(!stop){
+					startAnimation();
+				}
 				break;
 			}
-		}
-		default:
-			break;
 		}
 	}
 	
@@ -114,8 +88,8 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 	private Point mDownPoint = new Point();
 	private Point mMovePoint = new Point();
 	private long  mDownTime;
+	protected MenuMode 	mMenuMode;
 	
-	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getAction();
@@ -127,108 +101,34 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 			mDownPoint.y = y;
 			mDownTime = System.currentTimeMillis();
 			
-			mLockFrame.mDrawableDegreesP = mLockFrame.mDrawableDegreesC;
-			mLockFrame.mPointP.set(mLockFrame.mPointC);
-			mLockFrame.mScaleP = mLockFrame.mScaleC;
+			FrameUtils.keepPreValue(mLockFrame, mInitRectF);
 			for (Frame frame : mFrames) {
-				frame.mDrawableDegreesP = frame.mDrawableDegreesC;
-				frame.mPointP.set(frame.mPointC);
-				frame.mScaleP = frame.mScaleC;
-				frame.mMatrix.mapRect(frame.mRealRect, mInitRectF);
+				FrameUtils.keepPreValue(frame, mInitRectF);
 			}
+			mMenuMode = MenuMode.IDE;
 			if(mSelectFrame != null){
-				if(checkMenuContains(mMenuDrawables[0])){
-					mMenuMode = MenuMode.DEL;
-				}else if(checkMenuContains(mMenuDrawables[1])){
-					mMenuMode = MenuMode.ROTATE;
-				}else if(checkMenuContains(mMenuDrawables[2])){
-					mMenuMode = MenuMode.MIRROR;
-				}else if(checkMenuContains(mMenuDrawables[3])){
-					mMenuMode = MenuMode.SCALE;
-				}else if(mSelectFrame.mDrawable != null && mSelectFrame.mRealRect.contains(mDownPoint.x, mDownPoint.y)){
-					mMenuMode = MenuMode.MOVE;
-				}else{
-					mMenuMode = MenuMode.IDE;
+				mMenuMode = FrameUtils.checkMenuContains(mSelectFrame, mDownPoint, mMenuDrawables);
+				if(mMenuMode == MenuMode.IDE){
+					if(mSelectFrame.mDrawable != null && mSelectFrame.mRealRect.contains(mDownPoint.x, mDownPoint.y)){
+						mMenuMode = MenuMode.MOVE;
+					}					
 				}
-			}else{
-				mMenuMode = MenuMode.IDE;
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
 			if(mSelectFrame != null){
 				switch (mMenuMode) {
 				case SCALE:{
-					float rPts1[] = new float[]{x, y};
-					float dPts1[] = new float[2];
-
-					float rPts2[] = new float[]{mDownPoint.x, mDownPoint.y};
-					float dPts2[] = new float[2];
-					
-					Matrix inverse = new Matrix();
-					mSelectFrame.mMatrix.invert(inverse);
-					
-					dPts1[0] = dPts1[0] - mInitRectF.centerX();
-					dPts1[1] = dPts1[1] - mInitRectF.centerY();
-					
-					dPts2[0] = dPts2[0] - mInitRectF.centerX();
-					dPts2[1] = dPts2[1] - mInitRectF.centerY();
-					
-					inverse.mapPoints(dPts1, rPts1);
-					inverse.mapPoints(dPts2, rPts2);
-					
-					float radiusM = Float.parseFloat(String.valueOf(Math.sqrt(Double.parseDouble(String.valueOf(dPts1[0] * dPts1[0] + dPts1[1] * dPts1[1])))));//点击时的圆半径
-					float radiusD = Float.parseFloat(String.valueOf(Math.sqrt(Double.parseDouble(String.valueOf(dPts2[0] * dPts2[0] + dPts2[1] * dPts2[1])))));//移动时的圆半径
-					
-					float scale = radiusM / radiusD;
-					
-					if(mIsLock){
-						for (Frame frame : mFrames) {
-							frame.mScaleC = frame.mScaleP * scale;
-						}
-						mLockFrame.mScaleC = mLockFrame.mScaleP * scale;
-					}else{
-						mSelectFrame.mScaleC = mSelectFrame.mScaleP * scale;
-					}
+					doScale(mDownPoint.x, mDownPoint.y, x, y);
 				}
-				case ROTATE:
-					float rPts[]  = new float[]{mInitRectF.centerX(), mInitRectF.centerY()};
-					float dPts[]  = new float[2];
-					mSelectFrame.mMenuMatrix.mapPoints(dPts, rPts);
-					double atan1  = Math.atan2(mDownPoint.y - dPts[1], mDownPoint.x - dPts[0]);
-					double atan2  = Math.atan2(y - dPts[1], x - dPts[0]);
-					float degrees = Float.valueOf(String.valueOf(180 * atan2/ Math.PI - 180 * atan1 / Math.PI));
-					if(mIsLock){
-						for (Frame frame : mFrames) {
-							frame.mDrawableDegreesC = frame.mDrawableDegreesP + degrees;
-						}
-						mLockFrame.mDrawableDegreesC = mLockFrame.mDrawableDegreesP + degrees;
-					}else{
-						mSelectFrame.mDrawableDegreesC = mSelectFrame.mDrawableDegreesP + degrees;
-					}
+				case ROTATE:{
+					doRotate(mDownPoint.x, mDownPoint.y, x, y);
 					break;
-				case MOVE:
-					float rPts1[] = new float[]{x, y};
-					float dPts1[] = new float[2];
-
-					float rPts2[] = new float[]{mDownPoint.x, mDownPoint.y};
-					float dPts2[] = new float[2];
-					
-					Matrix inverse = new Matrix();
-					inverse.preRotate(-mSelectFrame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);
-					inverse.mapPoints(dPts1, rPts1);
-					inverse.mapPoints(dPts2, rPts2);
-					if(mIsLock){
-						for (Frame frame : mFrames) {
-							frame.mPointC.x	= frame.mPointP.x + dPts1[0] - dPts2[0];
-							frame.mPointC.y	= frame.mPointP.y + dPts1[1] - dPts2[1];
-						}
-						mLockFrame.mPointC.x	= mLockFrame.mPointP.x + dPts1[0] - dPts2[0];
-						mLockFrame.mPointC.y	= mLockFrame.mPointP.y + dPts1[1] - dPts2[1];
-					}else{
-						mSelectFrame.mPointC.x	= mSelectFrame.mPointP.x + dPts1[0] - dPts2[0];
-						mSelectFrame.mPointC.y	= mSelectFrame.mPointP.y + dPts1[1] - dPts2[1];
-					}
+				}
+				case MOVE:{
+					doMove(mDownPoint.x, mDownPoint.y, x, y);
 					break;
+				}
 				default:
 					break;
 				}
@@ -240,23 +140,10 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 			if(time - mDownTime < MAX_SING_DOWN_TIME){
 				switch (mMenuMode) {
 				case DEL:
-					if(mIsLock){
-						for (Frame frame : mFrames) {
-							frame.mDrawable = null;
-						}
-					}else{
-						mSelectFrame.mDrawable = null;
-					}
+					FrameUtils.delDrawable(mSelectFrame, mFrames, mIsLock);
 					break;
 				case MIRROR:
-					if(mIsLock){
-						for (Frame frame : mFrames) {
-							frame.mMirror = !frame.mMirror;
-						}
-						mLockFrame.mMirror = !mLockFrame.mMirror;
-					}else{
-						mSelectFrame.mMirror = !mSelectFrame.mMirror;
-					}
+					FrameUtils.reversalDrawable(mSelectFrame, mLockFrame, mFrames, mIsLock);
 					break;
 				case IDE:
 					mSelectFrame = null;
@@ -283,19 +170,12 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 		invalidate();
 		return true;
 	}
-
-	private boolean checkMenuContains(Drawable drawable){
-		RectF mDst = new RectF();
-		RectF mSrc = new RectF();
-		mSrc.set(drawable.getBounds());
-		
-		Matrix matrix = mSelectFrame.mMenuMatrix;
-		matrix.mapRect(mDst, mSrc);
-		
-		return mDst.contains(mDownPoint.x, mDownPoint.y);
-	}
 	
-	public void setIsLock(boolean isLock) {
+	protected abstract void doScale(float downPointX, float downPointY, float movePointX, float movePointY);
+	protected abstract void doRotate(float downPointX, float downPointY, float movePointX, float movePointY);
+	protected abstract void doMove(float downPointX, float downPointY, float movePointX, float movePointY);
+
+	public final void setIsLock(boolean isLock) {
 		this.mIsLock = isLock;
 		for (Frame frame : mFrames) {
 			Frame.clone(mLockFrame, frame);
@@ -304,7 +184,7 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 		invalidate();
 	}
 	
-	public RectF getRectF() {
+	public final RectF getRectF() {
 		return mInitRectF;
 	}
 	
@@ -333,73 +213,34 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 		}
 	}
 	
-	public void setOnModeFrameAction(OnModeFrameAction action) {
+	public final void setOnModeFrameAction(OnModeFrameAction action) {
 		this.mAction = action;
 	}
 	
-	public void setonResourceSelect(Drawable drawable){
-		if(!mIsLock){
-			if(mSelectFrame != null){
-				mSelectFrame.mDrawable = drawable;
-			}
-		}else {
-			mLockFrame.mDrawable = drawable;
-			for (Frame frame : mFrames) {
-				frame.mDrawable = drawable;
-			}
-		}
+	public final void setonResourceSelect(Drawable drawable){
+		FrameUtils.onResourceChange(mSelectFrame, mLockFrame, mFrames, mIsLock, drawable);
 		invalidate();
 	}
 	
 	@Override
-	public void onAlphaChange(int alpha) {
-		alpha = alpha  * 255 / 100;
-		if(!mIsLock){
-			if(mSelectFrame != null){
-				mSelectFrame.mAlpha = alpha;
-			}
-		}else {
-			mLockFrame.mAlpha = alpha;
-			for (Frame frame : mFrames) {
-				frame.mAlpha = alpha;
-			}
-		}
+	public final void onAlphaChange(int alpha) {
+		FrameUtils.onAlphaChange(mSelectFrame, mLockFrame, mFrames, mIsLock, alpha);
 		invalidate();
 	}
 	
 	@Override
-	public void onColorChange(int color) {
-		if(!mIsLock){
-			if(mSelectFrame != null){
-				mSelectFrame.mColor = color;
-			}
-		}else {
-			mLockFrame.mColor = color;
-			for (Frame frame : mFrames) {
-				frame.mColor = color;
-			}
-		}
+	public final void onColorChange(int color) {
+		FrameUtils.onColorChange(mSelectFrame, mLockFrame, mFrames, mIsLock, color);
 		invalidate();
 	}
 	
 	@Override
-	public void onTimesChange(int times) {
+	public final void onTimesChange(int times) {
 		HandlerUtils.removeCallbacksAndMessages(mHandler);
 		int size = mFrames.size();
 		float degrees = 360.0f / times;
 		if(times >= size){
-			for (int i = 0; i < size; i++) {
-				Frame frame = mFrames.get(i);
-				frame.mCurrentDegrees = degrees * i;
-			}
-			for (int i = size; i < times; i++) {
-				Frame frame = new Frame();
-				Frame.clone(mLockFrame, frame);
-				frame.mCurrentDegrees = degrees * i;
-				frame.mRectC.set(mInitRectF);
-				mFrames.add(frame);
-			}
-			invalidate();
+			addFrames(size, times, degrees);
 		}else{
 			for (int i = times; i < size; i++) {
 				Frame frame = mFrames.remove(i);
@@ -411,11 +252,13 @@ public class ModeFrame extends View implements OnParameterChangeListener{
 		}
 	}
 	
-	public void setDefaultDrawable(Drawable defaultDrawable){
+	protected abstract void addFrames(int size, int times, float degrees);
+	
+	public final void setDefaultDrawable(Drawable defaultDrawable){
 		mLockFrame.mDrawable = defaultDrawable;
 	}
 	
-	public void hideSelectFrame(){
+	public final void hideSelectFrame(){
 		mSelectFrame = null;
 		invalidate();
 	}

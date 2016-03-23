@@ -20,11 +20,22 @@ public class MyHandler extends Handler {
 		if (wr != null && wr.get() != null) {
 			try {
 				Class<?> cls = wr.get().getClass();
-				Method method = cls.getDeclaredMethod("handleMessage", Message.class);
-				method.setAccessible(true);
-				method.invoke(wr.get(), msg);
+				doHandleMessage(cls, msg);
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void doHandleMessage(Class<?> cls, Message msg){
+		try {
+			Method method = cls.getDeclaredMethod("handleMessage", Message.class);
+			method.setAccessible(true);
+			method.invoke(wr.get(), msg);
+		} catch (Exception e) {
+			cls = cls.getSuperclass();
+			if(cls != null){
+				doHandleMessage(cls, msg);
 			}
 		}
 	}
