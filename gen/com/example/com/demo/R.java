@@ -340,8 +340,8 @@ containing a value of this type.
         public static final int layout_category_item_name=0x7f070026;
         public static final int layout_color_item=0x7f070027;
         public static final int layout_color_item_icon=0x7f070028;
-        public static final int layout_frame=0x7f07002a;
         public static final int layout_frame_mode_1=0x7f070029;
+        public static final int layout_frame_mode_2=0x7f07002a;
         public static final int layout_framelayout=0x7f07002b;
         public static final int layout_gridview=0x7f07002c;
         public static final int layout_listview=0x7f07002d;

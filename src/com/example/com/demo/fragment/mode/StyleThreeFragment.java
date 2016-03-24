@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.example.com.demo.R;
-import com.example.com.demo.fragment.BaseHandlerFragment;
 
 public class StyleThreeFragment extends StyleContentFrament{
 	
@@ -46,18 +45,16 @@ public class StyleThreeFragment extends StyleContentFrament{
 
 	@Override
 	public void onLayoutChange() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void setIsLock(boolean isLock) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public int getSize() {
+	public int getProgress() {
 		return 0;
 	}
 

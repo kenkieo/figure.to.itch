@@ -11,7 +11,9 @@ public class Constants {
 		0xFFB9D998, 0xFFFFD661, 0xFFEFC028, 0xFFF26D26,
 		0xFFEF4926, 0xFF000000, 0xFFDED7BB
 	};
-	
+
+	public static final float DEGRESS			= 360.0f;
+	public static final int MAX_NUM			 	= 12;
 	public static final int INIT_NUM_MODE_1 	= 6;
 	public static final int INIT_NUM_MODE_2 	= 3;
 	public static final int MIN_NUM 			= 2;

@@ -87,7 +87,6 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 			break;
 		case StyleMenuLayout.MENU_RESOURCE:
 			showStyleResourceFragment(true);
-			showStyleParameterFragment(false);
 			break;
 		case StyleMenuLayout.MENU_PARAMETER:
 			showStyleParameterFragment(true);
@@ -103,6 +102,7 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		}else if(!mStyleResourceFragment.isHidden() && !shown){
 			ft.setCustomAnimations(0, R.anim.translate_from_bottom_out);
 			ft.hide(mStyleResourceFragment);
+			selectedMenuMode();
 		}
 		ft.commit();
 	}
@@ -115,8 +115,21 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		}else if(!mStyleParameterFragment.isHidden() && !shown){
 			ft.setCustomAnimations(0, R.anim.translate_from_bottom_out);
 			ft.hide(mStyleParameterFragment);
+			selectItemView();
 		}
 		ft.commit();
+	}
+	
+	private void selectItemView(){
+		if(mStyleResourceFragment != null && !mStyleResourceFragment.isHidden()){
+			mStyleMenuLayout.setItemSelected(mStyleMenuLayout.getMenuResource());
+		}else{
+			selectedMenuMode();
+		}
+	}
+	
+	private void selectedMenuMode(){
+		mStyleMenuLayout.setItemSelected(mStyleMenuLayout.getMenuMode());
 	}
 	
 	@Override
@@ -184,9 +197,9 @@ public class StyleBottomFragment extends BaseHandlerFragment implements OnStyleM
 		showStyleParameterFragment(false);
 	}
 	
-	public void setTimesSeekBarProgress(int progress){
+	public void setTimesSeekBarProgress(int progress, int max){
 		if(mStyleParameterFragment != null){
-			mStyleParameterFragment.setTimesSeekBarProgress(progress);
+			mStyleParameterFragment.setTimesSeekBarProgress(progress, max);
 		}
 	}
 	

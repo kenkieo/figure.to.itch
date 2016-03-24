@@ -46,7 +46,7 @@ public abstract class BaseFragmentActivity extends FragmentActivity{
 	protected abstract void initViews_BaseFragmentActivity();
 	
 	protected void setCurrentFragment(int fragmentIdx) {
-		if(mIdx != fragmentIdx){
+		if(mIdx != fragmentIdx && mIdx >= 0){
 			setSelection(mIdx, false);
 		}
 		mIdx = fragmentIdx;

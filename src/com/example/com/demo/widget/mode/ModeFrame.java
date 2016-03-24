@@ -174,15 +174,8 @@ public abstract class ModeFrame extends View implements OnParameterChangeListene
 	protected abstract void doScale(float downPointX, float downPointY, float movePointX, float movePointY);
 	protected abstract void doRotate(float downPointX, float downPointY, float movePointX, float movePointY);
 	protected abstract void doMove(float downPointX, float downPointY, float movePointX, float movePointY);
-
-	public final void setIsLock(boolean isLock) {
-		this.mIsLock = isLock;
-		for (Frame frame : mFrames) {
-			Frame.clone(mLockFrame, frame);
-			frame.mRectC.set(frame.mRectL);
-		}
-		invalidate();
-	}
+	protected abstract void onInitLayout();
+	public abstract void setIsLock(boolean isLock);
 	
 	public final RectF getRectF() {
 		return mInitRectF;
@@ -200,13 +193,15 @@ public abstract class ModeFrame extends View implements OnParameterChangeListene
 			mInitRectF.top  	= (getMeasuredHeight() / 2 - INIT_FRAME) / 2;
 			mInitRectF.right	= mInitRectF.left + INIT_FRAME;
 			mInitRectF.bottom	= mInitRectF.top  + INIT_FRAME;
+			onInitLayout();
 			
 			mLockFrame.mRectL.set(mInitRectF);
 			
-			mLockFrame.mRectC.left		= (getMeasuredWidth()  - INIT_FRAME) / 2;
-			mLockFrame.mRectC.top  		= (getMeasuredHeight() - INIT_FRAME) / 2;
+			mLockFrame.mRectC.left		= (getMeasuredWidth()    - INIT_FRAME) / 2;
+			mLockFrame.mRectC.top  		= (getMeasuredHeight()   - INIT_FRAME) / 2;
 			mLockFrame.mRectC.right		= mLockFrame.mRectC.left + INIT_FRAME;
 			mLockFrame.mRectC.bottom	= mLockFrame.mRectC.top  + INIT_FRAME;
+			
 			if(mAction != null){
 				mAction.onLayoutChange();
 			}
@@ -235,24 +230,9 @@ public abstract class ModeFrame extends View implements OnParameterChangeListene
 	}
 	
 	@Override
-	public final void onTimesChange(int times) {
+	public void onTimesChange(int times) {
 		HandlerUtils.removeCallbacksAndMessages(mHandler);
-		int size = mFrames.size();
-		float degrees = 360.0f / times;
-		if(times >= size){
-			addFrames(size, times, degrees);
-		}else{
-			for (int i = times; i < size; i++) {
-				Frame frame = mFrames.remove(i);
-				if(frame.equals(mSelectFrame)){
-					mSelectFrame = null;
-				}
-			}
-			invalidate();
-		}
 	}
-	
-	protected abstract void addFrames(int size, int times, float degrees);
 	
 	public final void setDefaultDrawable(Drawable defaultDrawable){
 		mLockFrame.mDrawable = defaultDrawable;

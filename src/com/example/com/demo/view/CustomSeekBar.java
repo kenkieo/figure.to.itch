@@ -1,6 +1,5 @@
 package com.example.com.demo.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -59,7 +58,11 @@ public class CustomSeekBar extends View{
 	}
 	
 	public void setMax(int max) {
-		this.mMax = max;
+		if(max <= 0) return;
+		if(mMax != max){
+			this.mMax = max;
+			checkPoint();
+		}
 	}
 	
 	public void setMin(int min) {
@@ -68,6 +71,8 @@ public class CustomSeekBar extends View{
 	
 	public void setProgress(int progress) {
 		this.mProgress = progress;
+		checkProgress();
+		invalidate();
 	}
 
 	@Override
@@ -96,19 +101,24 @@ public class CustomSeekBar extends View{
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		mThumbRadius = getHeight() / 2 - mPadding;
-		
+		checkPoint();
+		checkProgress();
+	}
+	
+	private void checkPoint(){
 		int total = mMax - mMin;
 		if(total == 0) total = 1;
-		int currentProgress = mProgress - mMin;
 		mPoint = (getWidth() - 2 * mThumbRadius) * 1.0f / total;
-		
+	}
+	
+	private void checkProgress(){
+		int currentProgress = mProgress - mMin;
 		mRect.left 	 = mPoint * currentProgress;
 		mRect.top	 = mPadding;
 		mRect.right  = mRect.left + mThumbRadius * 2;
 		mRect.bottom = mRect.top + mThumbRadius * 2;
 	}
 	
-	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getAction();

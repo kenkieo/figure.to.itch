@@ -60,8 +60,8 @@ public class ModeFrameDraw {
 				matrix.preRotate(frame.mCurrentDegrees, mCenterPoint.x, mCenterPoint.y);//绕中心点旋转
 				matrix.preTranslate(frame.mPointC.x, frame.mPointC.y);//移动
 				matrix.preRotate(frame.mDrawableDegreesC, frame.mRectC.centerX(), frame.mRectC.centerY());//自身旋转
-				matrix.preScale(frame.mMirror ? -1 : 1, 1, frame.mRectC.centerX(), frame.mRectC.centerY());//自身反转
 				matrix.preScale(frame.mScaleC, frame.mScaleC, frame.mRectC.centerX(), frame.mRectC.centerY());//自身放大
+				matrix.preScale(frame.mMirror ? -1 : 1, 1, frame.mRectC.centerX(), frame.mRectC.centerY());//自身反转
 				canvas.concat(matrix);
 				
 				frame.mRectC.round(frame.mRect);

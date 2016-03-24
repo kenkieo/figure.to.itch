@@ -53,13 +53,13 @@ public class StyleModeFragment extends BaseHandlerFragment implements OnClickLis
 	public void onClick(View v) {
 		Mode mode = Mode.MODE_1;
 		switch (v.getId()) {
-		case R.id.fragment_sytle_menu_mode:
+		case R.id.fragment_style_menu_mode_1:
 			mode = Mode.MODE_1;
 			break;
-		case R.id.fragment_sytle_menu_resource:
+		case R.id.fragment_style_menu_mode_2:
 			mode = Mode.MODE_2;
 			break;
-		case R.id.fragment_sytle_menu_parameter:
+		case R.id.fragment_style_menu_mode_3:
 			mode = Mode.MODE_3;
 			break;
 		}

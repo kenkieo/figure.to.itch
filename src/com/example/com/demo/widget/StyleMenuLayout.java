@@ -73,7 +73,7 @@ public class StyleMenuLayout extends LinearLayout implements View.OnClickListene
 		}
 	}
 	
-	private void setItemSelected(View tmpView){
+	public void setItemSelected(View tmpView){
 		if(mTmpView != null){
 			mTmpView.setSelected(false);
 		}
@@ -81,6 +81,14 @@ public class StyleMenuLayout extends LinearLayout implements View.OnClickListene
 		if(mTmpView != null){
 			mTmpView.setSelected(true);
 		}
+	}
+	
+	public TextView getMenuResource() {
+		return mMenuResource;
+	}
+	
+	public TextView getMenuMode() {
+		return mMenuMode;
 	}
 	
 	public void setOnStyleMenuClickAction(OnStyleMenuClickAction action) {

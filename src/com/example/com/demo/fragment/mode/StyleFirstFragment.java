@@ -1,12 +1,5 @@
 package com.example.com.demo.fragment.mode;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
@@ -17,11 +10,6 @@ import com.example.com.demo.widget.mode.ModeFrame;
 
 public class StyleFirstFragment extends StyleContentFrament{
 	
-	public Drawable 	mDefaultDrawable;
-	private List<Frame> mFrames;
-	private ModeFrame 	mModeFrame;
-	private Thread 		mThread;
-	
 	@Override
 	protected int getLayoutRes() {
 		return R.layout.layout_frame_mode_1;
@@ -29,14 +17,12 @@ public class StyleFirstFragment extends StyleContentFrament{
 
 	@Override
 	protected void initViews(View convertView) {
-		mDefaultDrawable = getResources().getDrawable(R.drawable.icon_default_source_1);
 		mModeFrame = (ModeFrame) convertView.findViewById(R.id.layout_frame_mode_1);
 	}
 	
 	@Override
 	protected void initData() {
 		super.initData();
-		mFrames = new ArrayList<Frame>();
 		mModeFrame.setFrames(mFrames);
 		mModeFrame.setDefaultDrawable(mDefaultDrawable);
 		mModeFrame.setOnModeFrameAction(this);
@@ -44,7 +30,8 @@ public class StyleFirstFragment extends StyleContentFrament{
 	
 	@Override
 	public void onLayoutChange() {
-		float degrees = 360.0f / Constants.INIT_NUM_MODE_1;
+		mInitLayout = true;
+		float degrees = Constants.DEGRESS / Constants.INIT_NUM_MODE_1;
 		for (int i = 0; i < Constants.INIT_NUM_MODE_1; i++) {
 			Frame frame = new Frame();
 			frame.mAlpha 			= 255;
@@ -93,51 +80,20 @@ public class StyleFirstFragment extends StyleContentFrament{
 		}
 	}
 	
-	public int getSize() {
-		return mFrames != null ? mFrames.size() : 0;
+	@Override
+	public int getProgress() {
+		int size = 0;
+		if(mInitLayout){
+			size = mFrames != null ? mFrames.size() : 0;
+		}else{
+			size = Constants.INIT_NUM_MODE_1;
+		}
+		return size;
 	}
 	
 	@Override
 	public int getMax() {
-		return 12;
-	}
-	
-	@Override
-	public void cutScreenShot() {
-		if(mModeFrame != null){
-			mModeFrame.hideSelectFrame();
-			mModeFrame.buildDrawingCache(true);
-			mModeFrame.buildDrawingCache();
-			final Bitmap bitmap = mModeFrame.getDrawingCache();
-			showProgressDialog();
-			mThread = new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					try {
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-						File directory = new File(mParent.getExternalCacheDir(), "bitmaps");
-						directory.mkdirs();
-						File file = new File(directory, System.currentTimeMillis() + ".jpg");
-						FileOutputStream fos = new FileOutputStream(file);
-						fos.write(baos.toByteArray());
-						fos.close();
-						baos.close();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					post(new Runnable() {
-						
-						@Override
-						public void run() {
-							dismissProgressDialog();
-						}
-					});
-				}
-			});
-			mThread.start();
-		}
+		return Constants.MAX_NUM;
 	}
 	
 	@Override
@@ -147,11 +103,6 @@ public class StyleFirstFragment extends StyleContentFrament{
 		if(mFrames != null){
 			mFrames.clear();
 			mFrames = null;
-		}
-		
-		if(mModeFrame != null){
-			mModeFrame.setOnModeFrameAction(null);
-			mModeFrame = null;
 		}
 	}
 

@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.example.com.demo.R;
 import com.example.com.demo.basefragmentactivity.BaseTitleFragmentActivity;
+import com.example.com.demo.fragment.mode.StyleContentFrament;
 import com.example.com.demo.fragment.mode.StyleFirstFragment;
 import com.example.com.demo.fragment.mode.StyleSecondFragment;
 import com.example.com.demo.fragment.mode.StyleThreeFragment;
@@ -26,6 +27,7 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	private StyleFirstFragment  mStyleFirstFragment;
 	private StyleSecondFragment mStyleSecondFragment;
 	private StyleThreeFragment	mStyleThreeFragment;
+	private StyleContentFrament[] mStyleContentFraments;
 	
 	private ActionbarMenuImageView mLockIcon;
 	private ActionbarMenuImageView mCutIcon;
@@ -58,12 +60,18 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 		super.onMenuAction(menuId);
 		if(R.id.action_menu_lock == menuId){
 			mLockIcon.setSelected(!mLockIcon.isSelected());
-			if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
-				mStyleFirstFragment.setIsLock(mLockIcon.isSelected());
+			for (StyleContentFrament styleBottomFragment : mStyleContentFraments) {
+				if(styleBottomFragment != null && !styleBottomFragment.isHidden()){
+					styleBottomFragment.setIsLock(mLockIcon.isSelected());
+					break;
+				}
 			}
 		}else if(R.id.action_menu_cut == menuId){
-			if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
-				mStyleFirstFragment.cutScreenShot();
+			for (StyleContentFrament styleBottomFragment : mStyleContentFraments) {
+				if(styleBottomFragment != null && !styleBottomFragment.isHidden()){
+					styleBottomFragment.cutScreenShot();
+					break;
+				}
 			}
 		}
 	}
@@ -92,11 +100,23 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 		ft.add(R.id.StyleFrameLayout, mStyleThreeFragment);
 		ft.hide(mStyleThreeFragment);
 		ft.commit();
+		
+		mStyleContentFraments = new StyleContentFrament[]{mStyleFirstFragment, mStyleSecondFragment, mStyleThreeFragment};
 	}
 
 	@Override
 	protected void setSelection(int idx, boolean show) {
-		
+		FragmentTransaction ft = mFragmentManager.beginTransaction();
+		for (int i = 0; i < mStyleContentFraments.length; i ++) {
+			StyleContentFrament styleContentFrament = mStyleContentFraments[i];
+			if(i == idx){
+				setTimesSeekBarProgress(styleContentFrament.getProgress(), styleContentFrament.getMax());
+				ft.show(styleContentFrament);
+			}else{
+				ft.hide(styleContentFrament);
+			}
+		}
+		ft.commit();
 	}
 	
 	@Override
@@ -107,60 +127,64 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 	
 	@Override
 	public void onMenuChoiced(Mode mode) {
-		FragmentTransaction ft = mFragmentManager.beginTransaction();
+		int index = 0;
 		switch (mode) {
 		case MODE_1:
 			default:
-			ft.show(mStyleFirstFragment);
-			ft.hide(mStyleSecondFragment);
-			ft.hide(mStyleThreeFragment);
-			setTimesSeekBarProgress(mStyleFirstFragment.getSize());
 			break;
 		case MODE_2:
-			ft.hide(mStyleFirstFragment);
-			ft.show(mStyleSecondFragment);
-			ft.hide(mStyleThreeFragment);
+			index = 1;
 			break;
 		case MODE_3:
-			ft.hide(mStyleFirstFragment);
-			ft.hide(mStyleSecondFragment);
-			ft.show(mStyleThreeFragment);
+			index = 2;
 			break;
 		}
-		ft.commit();
+		setCurrentFragment(index);
 	}
 	
 	@Override
 	public void onResourceSelect(Drawable drawable) {
-		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
-			mStyleFirstFragment.onResourceSelect(drawable);
+		for (StyleContentFrament styleBottomFragment : mStyleContentFraments) {
+			if(styleBottomFragment != null && !styleBottomFragment.isHidden()){
+				styleBottomFragment.onResourceSelect(drawable);
+				break;
+			}
 		}
 	}
 	
 	@Override
 	public void onAlphaChange(int alpha) {
-		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
-			mStyleFirstFragment.onAlphaChange(alpha);
+		for (StyleContentFrament styleBottomFragment : mStyleContentFraments) {
+			if(styleBottomFragment != null && !styleBottomFragment.isHidden()){
+				styleBottomFragment.onAlphaChange(alpha);
+				break;
+			}
 		}
 	}
 	
 	@Override
 	public void onTimesChange(int times) {
-		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
-			mStyleFirstFragment.onTimesChange(times);
+		for (StyleContentFrament styleBottomFragment : mStyleContentFraments) {
+			if(styleBottomFragment != null && !styleBottomFragment.isHidden()){
+				styleBottomFragment.onTimesChange(times);
+				break;
+			}
 		}
 	}
 	
 	@Override
 	public void onColorChange(int color) {
-		if(mStyleFirstFragment != null && !mStyleFirstFragment.isHidden()){
-			mStyleFirstFragment.onColorChange(color);
+		for (StyleContentFrament styleBottomFragment : mStyleContentFraments) {
+			if(styleBottomFragment != null && !styleBottomFragment.isHidden()){
+				styleBottomFragment.onColorChange(color);
+				break;
+			}
 		}
 	}
 	
-	public void setTimesSeekBarProgress(int progress){
+	public void setTimesSeekBarProgress(int progress, int max){
 		if(mStyleBottomFragment != null){
-			mStyleBottomFragment.setTimesSeekBarProgress(progress);
+			mStyleBottomFragment.setTimesSeekBarProgress(progress, max);
 		}
 	}
 	
@@ -219,6 +243,8 @@ public class MainActivity extends BaseTitleFragmentActivity implements OnChoiceM
 			mCutIcon.setOnClickListener(null);
 			mCutIcon = null;
 		}
+		
+		mStyleContentFraments = null;
 		
 	}
 

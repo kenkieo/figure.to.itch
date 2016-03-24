@@ -1,5 +1,6 @@
 package com.example.com.demo.fragment.style.menu;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -46,9 +47,9 @@ public class StyleParameterFragment extends BaseHandlerFragment implements OnSee
 		mAlphaSeekBar = (CustomSeekBar) convertView.findViewById(R.id.fragment_style_parameter_alpha_seek);
 		mColorLayout  = (ViewGroup) convertView.findViewById(R.id.fragment_style_parameter_color_layout);
 		
-		mTimesSeekBar.setProgress(Constants.MIN_NUM);
+		mTimesSeekBar.setProgress(Constants.INIT_NUM_MODE_1);
 		mTimesSeekBar.setMin(Constants.MIN_NUM);
-		mTimesSeekBar.setMax(12);
+		mTimesSeekBar.setMax(Constants.MAX_NUM);
 		
 		mAlphaSeekBar.setProgress(100);
 		mAlphaSeekBar.setMax(100);
@@ -108,8 +109,11 @@ public class StyleParameterFragment extends BaseHandlerFragment implements OnSee
 		}
 	}
 	
-	public void setTimesSeekBarProgress(int progress){
+	public void setTimesSeekBarProgress(int progress, int max){
+		Log.i("TAG", "progress:" + progress);
+		Log.i("TAG", "max:" + max);
 		if(mTimesSeekBar != null){
+			mTimesSeekBar.setMax(max);
 			mTimesSeekBar.setProgress(progress);
 		}
 	}
